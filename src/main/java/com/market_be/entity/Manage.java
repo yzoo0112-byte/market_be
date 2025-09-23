@@ -12,15 +12,16 @@ import lombok.*;
 @Builder
 public class Manage {
     @Id
+    @Column(name = "manage_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int manage_id;
+    private int id;
 
     @Column(nullable = false)
-    private int file_count;
+    private int fileCount;
 
     @Column(nullable = false)
-    private Long file_max_size;
+    private Long fileMaxSize;
 
     @Column(nullable = false)
-    private String file_extension;
+    private String fileExtension;
 }

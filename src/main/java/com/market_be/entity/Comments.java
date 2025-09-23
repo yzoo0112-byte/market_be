@@ -15,23 +15,24 @@ import java.sql.Date;
 @Builder
 public class Comments {
     @Id
+    @Column(name = "comments_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JoinColumn(name = "post_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Posts post_id;
+    private Posts postId;
 
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user_id;
+    private User userId;
 
     @Column(nullable = false, columnDefinition = "text")
     private String comment;
 
     @Column(updatable = false, nullable = false)
-    private Date created_at;
+    private Date createdAt;
 
     @LastModifiedDate
-    private Date updated_at;
+    private Date updatedAt;
 }
