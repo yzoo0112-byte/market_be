@@ -1,5 +1,6 @@
 package com.market_be.entity;
 
+import com.market_be.content.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.sql.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class AppUser {
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,5 +43,10 @@ public class User {
     @Column(nullable = false)
     private String addr;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     private Date lastVisiteDate;
+
 }

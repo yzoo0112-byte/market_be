@@ -22,7 +22,7 @@ public class Posts {
 
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private User userId;
+    private AppUser userId;
 
     @Column(nullable = false)
     private String title;
