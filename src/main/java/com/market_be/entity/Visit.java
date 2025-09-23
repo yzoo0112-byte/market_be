@@ -18,7 +18,7 @@ import java.sql.Date;
 public class Visit {
     @Id
     @LastModifiedDate
-    private Date visit_date;
+    private Date visitDate;
 
     private int visits;
 }

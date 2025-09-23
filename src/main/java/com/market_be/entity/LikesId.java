@@ -3,6 +3,6 @@ import java.io.Serializable;
 
 
 public class LikesId implements Serializable {
-    private Long user_id;
-    private Long post_id;
+    private Long userId;
+    private Long postId;
 }

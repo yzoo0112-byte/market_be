@@ -16,22 +16,22 @@ public class User {
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_Id;
+    private Long id;
 
     @Column(unique = true, length = 20, nullable = false)
-    private String login_id;
+    private String loginId;
 
     @Column(unique = true, length = 20, nullable = false)
     private String nickname;
 
     @Column(length = 10, nullable = false)
-    private String user_name;
+    private String userName;
 
     @Column(nullable = false)
     private String password;
 
     @Column(unique = true, length = 11, columnDefinition = "CHARACTER(11)", nullable = false)
-    private String phone_num;
+    private String phoneNum;
 
     @Column(length = 8, columnDefinition = "CHARACTER(8)", nullable = false)
     private String birth;
@@ -42,5 +42,5 @@ public class User {
     @Column(nullable = false)
     private String addr;
 
-    private Date last_visite_date;
+    private Date lastVisiteDate;
 }
