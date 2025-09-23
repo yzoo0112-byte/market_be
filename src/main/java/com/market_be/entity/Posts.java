@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "posts")
@@ -22,7 +23,7 @@ public class Posts {
 
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private User userId;
+    private AppUser userId;
 
     @Column(nullable = false)
     private String title;
@@ -41,4 +42,6 @@ public class Posts {
     @Column(length = 50)
     private String hashtag;
 
+    @ElementCollection
+    private List<String> filePaths;
 }
