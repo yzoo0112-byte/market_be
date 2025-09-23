@@ -24,18 +24,24 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final AuthEntryPoint authEntryPoint;
 
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf((csrf) -> csrf.disable())
-                .sessionManagement((session) -> session
+        http.csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests((request) -> request
-                        .requestMatchers(HttpMethod.POST, "/signup","/login", "/").permitAll()
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers("/", "/login", "/signup", "/main", "/products/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/mypage/**").authenticated()
+                        .anyRequest().permitAll()
+                )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling((ex) -> ex.authenticationEntryPoint(authEntryPoint));
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint));
+
         return http.build();
     }
+
 
 
     @Bean

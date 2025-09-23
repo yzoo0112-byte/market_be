@@ -21,14 +21,23 @@ import java.util.Collections;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-
+    
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String path = request.getRequestURI();
+
+        // 공개 경로는 필터 건너뛰기
+        if (path.equals("/") || path.equals("/login") || path.equals("/signup") || path.startsWith("/main")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if(jwtToken != null) {
+        if (jwtToken != null && jwtToken.startsWith("Bearer ")) {
             String loginId = jwtService.parseToken(request);
-            if(loginId != null) {
+            if (loginId != null) {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
                         loginId,
                         null,
@@ -36,6 +45,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
+
         filterChain.doFilter(request, response);
     }
+
 }
