@@ -14,9 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -55,8 +53,6 @@ public class LoginController {
         return ResponseEntity.ok("회원가입 성공");
     }
 
-
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AccountCredentials credentials) {
 
@@ -70,5 +66,16 @@ public class LoginController {
 
     }
 
+    @GetMapping("/echeck")
+    public ResponseEntity<?> checkDuplicateEmail(@RequestParam String email) {
+        boolean exists = appUserRepository.existsByEmail(email);
+        return ResponseEntity.ok(exists);
+    }
+
+    @GetMapping("/ncheck")
+    public ResponseEntity<?> checkDuplicateNickname(@RequestParam String nickname) {
+        boolean exists = appUserRepository.existsByNickname(nickname);
+        return ResponseEntity.ok(exists);
+    }
 
 }

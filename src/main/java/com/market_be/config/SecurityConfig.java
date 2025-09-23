@@ -34,7 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login", "/signup").permitAll()
                         .requestMatchers("/manage/**").hasRole("ADMIN")
                         .requestMatchers("/mypage/**").authenticated()
-                        .anyRequest().denyAll()
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint));
