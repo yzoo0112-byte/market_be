@@ -18,11 +18,11 @@ public class Posts {
     @Id
     @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long post_id;
+    private Long id;
 
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user_id;
+    private User userId;
 
     @Column(nullable = false)
     private String title;
@@ -31,10 +31,10 @@ public class Posts {
     private String content;
 
     @Column(updatable = false, nullable = false)
-    private LocalDateTime create_at;
+    private LocalDateTime createAt;
 
     @LastModifiedDate
-    private LocalDateTime update_at;
+    private LocalDateTime updateAt;
 
     private Long views;
 

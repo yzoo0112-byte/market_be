@@ -12,23 +12,24 @@ import lombok.*;
 @Builder
 public class Files {
     @Id
+    @Column(name = "file_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long file_id;
+    private Long id;
 
     @JoinColumn(name = "post_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Posts post_id;
+    private Posts postId;
 
     @Column(unique = true)
-    private String file_name;
+    private String fileName;
 
     @Column(unique = true)
-    private String file_url;
+    private String fileUrl;
 
-    private String file_orgname;
+    private String fileOrgname;
 
     @Column(columnDefinition = "CHAR")
-    private String image_yn;
+    private String imageYn;
 
-    private Long file_size;
+    private Long fileSize;
 }
