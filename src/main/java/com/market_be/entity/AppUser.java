@@ -4,7 +4,8 @@ import com.market_be.content.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
+import java.util.Date;
+
 
 @Entity
 @Table(name = "user")
