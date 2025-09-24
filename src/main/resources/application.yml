@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: market_be
+  datasource:
+    url: jdbc:mysql://localhost:3306/marketdb
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create

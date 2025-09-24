@@ -3,7 +3,7 @@ package com.market_be.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 @Table(name = "user")
