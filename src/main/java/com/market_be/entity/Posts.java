@@ -1,5 +1,6 @@
 package com.market_be.entity;
 
+import com.market_be.constant.HashtagType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,11 +16,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Posts {
+    //게시글 생성 번호
     @Id
     @Column(name = "post_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //회원 생성 번호
     @JoinColumn(name = "user_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private AppUser userId;
@@ -38,7 +41,8 @@ public class Posts {
 
     private Long views;
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 50)
-    private String hashtag;
+    private HashtagType hashtag;
 
 }

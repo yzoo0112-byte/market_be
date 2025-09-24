@@ -8,7 +8,7 @@ import java.util.Date;
 
 
 @Entity
-@Table(name = "user")
+@Table(name = "appuser")
 @Getter
 @Setter
 @NoArgsConstructor

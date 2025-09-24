@@ -2,9 +2,12 @@ package com.market_be.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments")
@@ -31,8 +34,9 @@ public class Comments {
     private String comment;
 
     @Column(updatable = false, nullable = false)
-    private Date createdAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-    @LastModifiedDate
-    private Date updatedAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }
