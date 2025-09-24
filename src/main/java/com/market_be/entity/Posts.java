@@ -32,7 +32,7 @@ public class Posts {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column(updatable = false, nullable = false)
+    @Column(updatable = false, nullable = false, length = 0)
     private LocalDateTime createAt;
 
     @LastModifiedDate

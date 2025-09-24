@@ -22,7 +22,7 @@ public class CommentsController {
     private final CommentsService commentsService;
 
     // 댓글 작성
-    @PostMapping("/{Id}/comment")
+    @PostMapping("/{Id}")
     public ResponseEntity<?> creatComment(@PathVariable Long Id, @RequestBody CommentsDto dto){
         commentsService.createComment(
                 Id,
@@ -35,10 +35,17 @@ public class CommentsController {
 
     }
 
-    //댓글 검색
+    //댓글 조회
     @GetMapping("/{Id}/comment")
     public ResponseEntity<?> getCommentsByBoardId(@PathVariable Long Id) {
         return ResponseEntity.ok(commentsService.getCommentsByPostId(Id));
+    }
+
+    //댓글 수정
+    @PutMapping("/{id}/{commentId}")
+    public ResponseEntity<?> updateComment(@PathVariable Long id, @RequestBody String newContent, @RequestBody CommentsDto dto) {
+        commentsService.updateComment(id, newContent, dto.getUserId());
+        return ResponseEntity.ok("댓글이 수정되었습니다.");
     }
 
 }

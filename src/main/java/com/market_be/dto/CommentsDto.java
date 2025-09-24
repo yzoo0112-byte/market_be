@@ -15,13 +15,15 @@ import java.util.Date;
 public class CommentsDto {
     private Long postId;
 
-    private Long userId;
+    private Long commentId;
 
-    private String hashtag;
+    private Long userId;
 
     private String comment;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    private String nickname;
 }

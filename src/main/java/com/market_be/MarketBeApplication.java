@@ -43,7 +43,7 @@ public class MarketBeApplication implements CommandLineRunner {
         postsRepository.save(Posts.builder()
                 .title("test")
                 .content("test")
-                .hashtag("test")
+                .hashtag("")
                 .createAt(LocalDateTime.now())
                 .userId(user)
                 .views(0L)
