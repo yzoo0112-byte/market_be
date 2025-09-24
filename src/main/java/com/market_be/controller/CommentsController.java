@@ -21,19 +21,24 @@ import java.util.Date;
 public class CommentsController {
     private final CommentsService commentsService;
 
-
-    @PostMapping("/{Id}/comments")
+    // 댓글 작성
+    @PostMapping("/{Id}/comment")
     public ResponseEntity<?> creatComment(@PathVariable Long Id, @RequestBody CommentsDto dto){
         commentsService.createComment(
                 Id,
                 dto.getComment(),
-                dto.getId(), 
-                new Date(),
-                new Date()
+                dto.getUserId()
+
         );
 
         return ResponseEntity.ok("댓글이 등록되었습니다.");
 
+    }
+
+    //댓글 검색
+    @GetMapping("/{Id}/comment")
+    public ResponseEntity<?> getCommentsByBoardId(@PathVariable Long Id) {
+        return ResponseEntity.ok(commentsService.getCommentsByPostId(Id));
     }
 
 }

@@ -5,20 +5,21 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
 @ToString
 @Builder
 public class CommentsDto {
-    private Long id;
+    private Long postId;
 
     private Long userId;
 
     private String comment;
 
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 }
