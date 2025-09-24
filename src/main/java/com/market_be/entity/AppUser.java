@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.util.Date;
 
-
 @Entity
 @Table(name = "appuser")
 @Getter
