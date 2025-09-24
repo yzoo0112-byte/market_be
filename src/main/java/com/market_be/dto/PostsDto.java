@@ -33,7 +33,7 @@ public class PostsDto {
 
     private Long views;
 
-    private HashtagType hashtag;
+    private String hashtag;
 
     public static PostsDto fromEntity(Posts posts) {
         return PostsDto.builder()

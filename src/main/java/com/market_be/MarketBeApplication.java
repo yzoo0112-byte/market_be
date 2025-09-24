@@ -1,6 +1,7 @@
 package com.market_be;
 
 import com.market_be.constant.HashtagType;
+import com.market_be.content.Role;
 import com.market_be.entity.AppUser;
 import com.market_be.entity.Posts;
 import com.market_be.repository.AppUserRepository;
@@ -39,12 +40,13 @@ public class MarketBeApplication implements CommandLineRunner {
                 .birth("000000")
                 .email("test@test.com")
                 .addr("창원대")
+                .role(Role.USER)
                 .build());
 
         postsRepository.save(Posts.builder()
                 .title("test")
                 .content("test")
-                .hashtag(HashtagType.CLOTHING)
+                .hashtag("")
                 .createAt(LocalDateTime.now())
                 .userId(user)
                 .views(0L)

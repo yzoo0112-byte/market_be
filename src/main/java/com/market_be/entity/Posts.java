@@ -42,8 +42,7 @@ public class Posts {
 
     private Long views;
 
-    @Enumerated(EnumType.STRING)
     @Column(length = 50)
-    private HashtagType hashtag;
+    private String hashtag;
 
 }
