@@ -42,6 +42,4 @@ public class Posts {
     @Column(length = 50)
     private String hashtag;
 
-    @ElementCollection
-    private List<String> filePaths;
 }

@@ -14,11 +14,11 @@ public class Files {
     @Id
     @Column(name = "file_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long fileid;
 
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private Posts postId;
+    private Posts post;
 
     @Column(unique = true)
     private String fileName;
