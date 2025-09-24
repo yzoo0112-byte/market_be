@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +22,17 @@ public class PostController {
 
     private final PostService postService;
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<PostResponseDto> createPost(@ModelAttribute PostRequestDto dto) throws IOException {
+        System.out.println("createPost 호출됨");
         List<String> filePaths = new ArrayList<>();
 
         if (dto.getFiles() != null) {
             for (MultipartFile file : dto.getFiles()) {
-                String uploadDir = "uploads";
+                String uploadDir = System.getProperty("user.dir") + "/uploads";
                 File directory = new File(uploadDir);
                 if (!directory.exists()) {
-                    directory.mkdir();
+                    directory.mkdirs();
                 }
 
                 String filePath = uploadDir + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
@@ -44,6 +46,9 @@ public class PostController {
         posts.setHashtag(dto.getHashtag());
         posts.setContent(dto.getContent());
         posts.setFilePaths(filePaths);
+        posts.setCreateAt(LocalDateTime.now());
+
+
 
         Posts saved = postService.save(posts);
 
