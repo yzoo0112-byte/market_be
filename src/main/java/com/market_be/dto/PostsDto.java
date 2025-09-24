@@ -1,15 +1,11 @@
 package com.market_be.dto;
 
 
-import com.market_be.constant.HashtagType;
-import com.market_be.entity.AppUser;
 import com.market_be.entity.Posts;
-import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 

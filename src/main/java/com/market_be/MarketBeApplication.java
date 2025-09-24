@@ -1,6 +1,5 @@
 package com.market_be;
 
-import com.market_be.constant.HashtagType;
 import com.market_be.content.Role;
 import com.market_be.entity.AppUser;
 import com.market_be.entity.Posts;
@@ -10,9 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.time.LocalDateTime;
 
@@ -46,7 +43,7 @@ public class MarketBeApplication implements CommandLineRunner {
         postsRepository.save(Posts.builder()
                 .title("test")
                 .content("test")
-                .hashtag("")
+                .hashtag("test")
                 .createAt(LocalDateTime.now())
                 .userId(user)
                 .views(0L)

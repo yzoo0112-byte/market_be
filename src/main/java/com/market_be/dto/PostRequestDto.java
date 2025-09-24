@@ -1,6 +1,5 @@
 package com.market_be.dto;
 
-import com.market_be.constant.HashtagType;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;

@@ -17,6 +17,8 @@ public class CommentsDto {
 
     private Long userId;
 
+    private String hashtag;
+
     private String comment;
 
     private LocalDateTime createdAt;
