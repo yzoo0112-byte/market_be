@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 @Table(name = "comments")

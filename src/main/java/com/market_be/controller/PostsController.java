@@ -3,6 +3,7 @@ package com.market_be.controller;
 import com.market_be.dto.PostsDto;
 import com.market_be.entity.Posts;
 import com.market_be.repository.PostsRepository;
+import com.market_be.service.PostsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/post")
 public class PostsController {
     private final PostsRepository postsRepository;
+    private final PostsService postsService;
 
     @GetMapping("/{id}")
     public ResponseEntity<PostsDto> findById(@PathVariable Long id) {
@@ -26,4 +28,8 @@ public class PostsController {
     }
 
     @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable Long id) {
+        postsService.deletePost(id);
+        return ResponseEntity.ok().body(id);
+    }
 }
