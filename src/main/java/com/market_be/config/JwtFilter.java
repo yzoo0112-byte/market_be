@@ -37,15 +37,19 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (jwtToken != null && jwtToken.startsWith("Bearer ")) {
-            String loginId = jwtService.parseToken(request);
+            String token = jwtToken.substring(7); // "Bearer " 제거
+            String loginId = jwtService.parseToken(token); // ✅ 올바른 호출
+
             if (loginId != null) {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
                         loginId,
                         null,
-                        Collections.emptyList());
+                        Collections.emptyList()
+                );
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
+
 
         filterChain.doFilter(request, response);
     }

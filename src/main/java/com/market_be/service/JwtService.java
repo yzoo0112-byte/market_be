@@ -1,5 +1,6 @@
 package com.market_be.service;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -28,20 +29,15 @@ public class JwtService {
     }
 
     // JWT를 받아서 username(ID)를 반환
-    public String parseToken(HttpServletRequest request) {
-
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header != null && header.startsWith(PREFIX)) {
+    public String parseToken(String token) {
+        try {
             JwtParser parser = Jwts.parserBuilder()
                     .setSigningKey(SIGNING_KEY)
                     .build();
-            String loginId = parser.parseClaimsJws(header.replace(PREFIX, ""))
-                    .getBody()
-                    .getSubject();
-            if (loginId != null) {
-                return loginId;
-            }
+            return parser.parseClaimsJws(token).getBody().getSubject();
+        } catch (JwtException e) {
+            System.err.println("JWT 파싱 실패: " + e.getMessage());
+            return null;
         }
-        return null;
     }
 }

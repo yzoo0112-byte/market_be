@@ -1,6 +1,7 @@
 package com.market_be.controller;
 
 import com.market_be.dto.MyPageDto;
+import com.market_be.exception.CustomException;
 import com.market_be.service.JwtService;
 import com.market_be.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,9 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-
 @RestController
-@RequestMapping("/api/mypage")
+@RequestMapping("/mypage")
 @RequiredArgsConstructor
 public class MyPageController {
 
@@ -21,17 +21,37 @@ public class MyPageController {
     // 1. 비밀번호 재확인
     @PostMapping("/pw")
     public ResponseEntity<?> verifyPassword(@RequestBody Map<String, String> body,
-                                            @RequestHeader("Authorization") HttpServletRequest request) {
+                                            @RequestHeader("Authorization") String authHeader) {
         String password = body.get("password");
-        String loginId = jwtService.parseToken(request);
-        boolean isValid = userService.checkPassword(loginId, password);
-        return ResponseEntity.ok(Map.of("valid", isValid));
+
+        // Authorization 헤더 확인
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body("토큰이 유효하지 않습니다.");
+        }
+
+        // "Bearer " 접두어 제거
+        String token = authHeader.substring(7);
+        String loginId = jwtService.parseToken(token);
+
+        // 토큰 파싱 실패
+        if (loginId == null || loginId.isBlank()) {
+            return ResponseEntity.status(401).body("토큰 파싱 실패");
+        }
+
+        // 비밀번호 확인 + 예외 처리
+        try {
+            boolean isValid = userService.checkPassword(loginId, password);
+            return ResponseEntity.ok(Map.of("valid", isValid));
+        } catch (CustomException e) {
+            return ResponseEntity.status(401).body(e.getMessage());
+        }
     }
 
     // 2. 개인정보 조회
     @GetMapping("/info")
-    public ResponseEntity<MyPageDto> getUserInfo(@RequestHeader("Authorization")HttpServletRequest request){
-        String loginId = jwtService.parseToken(request);
+    public ResponseEntity<MyPageDto> getUserInfo(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        String loginId = jwtService.parseToken(token);
         MyPageDto user = userService.getUserInfo(loginId);
         return ResponseEntity.ok(user);
     }
@@ -39,8 +59,9 @@ public class MyPageController {
     // 3. 개인정보 수정
     @PutMapping("/update")
     public ResponseEntity<?> updateUserInfo(@RequestBody MyPageDto myPageDto,
-                                            @RequestHeader("Authorization")HttpServletRequest request) {
-        String loginId = jwtService.parseToken(request);
+                                            @RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.substring(7);
+        String loginId = jwtService.parseToken(token);
         userService.updateUserInfo(loginId, myPageDto);
         return ResponseEntity.ok().build();
     }

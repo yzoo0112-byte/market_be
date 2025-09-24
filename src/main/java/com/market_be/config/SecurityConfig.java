@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/", "/login", "/signup/**").permitAll()
                         .requestMatchers("/manage/**").hasRole("ADMIN")
-                        .requestMatchers("/mypage/**").authenticated()
+                        .requestMatchers("/api/mypage/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
