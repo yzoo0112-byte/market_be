@@ -66,13 +66,13 @@ public class LoginController {
 
     }
 
-    @GetMapping("/echeck")
+    @GetMapping("/signup/echeck")
     public ResponseEntity<?> checkDuplicateEmail(@RequestParam String email) {
         boolean exists = appUserRepository.existsByEmail(email);
         return ResponseEntity.ok(exists);
     }
 
-    @GetMapping("/ncheck")
+    @GetMapping("/signup/ncheck")
     public ResponseEntity<?> checkDuplicateNickname(@RequestParam String nickname) {
         boolean exists = appUserRepository.existsByNickname(nickname);
         return ResponseEntity.ok(exists);
