@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/login", "/signup/**").permitAll()
                         .requestMatchers("/manage/**").hasRole("ADMIN")
                         .requestMatchers("/mypage/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/post").authenticated()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

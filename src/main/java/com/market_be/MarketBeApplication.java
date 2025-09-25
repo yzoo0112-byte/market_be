@@ -28,25 +28,25 @@ public class MarketBeApplication implements CommandLineRunner {
 
 
     public void run(String... args) throws Exception {
-        AppUser user = appUserRepository.save(AppUser.builder()
-                .loginId("test")
-                .nickname("hong")
-                .userName("홍길동")
-                .password("test")
-                .phoneNum("01012345678")
-                .birth("000000")
-                .email("test@test.com")
-                .addr("창원대")
-                .role(Role.USER)
-                .build());
-
-        postsRepository.save(Posts.builder()
-                .title("test")
-                .content("test")
-                .hashtag("")
-                .createAt(LocalDateTime.now())
-                .userId(user)
-                .views(0L)
-                .build());
+//        AppUser user = appUserRepository.save(AppUser.builder()
+//                .loginId("test")
+//                .nickname("hong")
+//                .userName("홍길동")
+//                .password("test")
+//                .phoneNum("01012345678")
+//                .birth("000000")
+//                .email("test@test.com")
+//                .addr("창원대")
+//                .role(Role.USER)
+//                .build());
+//
+//        postsRepository.save(Posts.builder()
+//                .title("test")
+//                .content("test")
+//                .hashtag("")
+//                .createAt(LocalDateTime.now())
+//                .userId(user)
+//                .views(0L)
+//                .build());
     }
 }
