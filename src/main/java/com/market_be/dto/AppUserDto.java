@@ -1,8 +1,6 @@
 package com.market_be.dto;
 
-import com.market_be.entity.AppUser;
-import com.market_be.entity.Posts;
-import jakarta.persistence.Column;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +13,7 @@ import java.sql.Date;
 @ToString
 @Builder
 public class AppUserDto {
-    private Long id;
+    private Long userId;
 
     private String loginId;
 

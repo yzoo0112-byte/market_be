@@ -23,16 +23,13 @@ public class CommentsController {
 
     // 댓글 작성
     @PostMapping("/{Id}")
-    public ResponseEntity<?> creatComment(@PathVariable Long Id, @RequestBody CommentsDto dto){
+    public ResponseEntity<?> createComment(@PathVariable Long Id, @RequestBody CommentsDto dto){
         commentsService.createComment(
                 Id,
                 dto.getComment(),
                 dto.getUserId()
-
         );
-
         return ResponseEntity.ok("댓글이 등록되었습니다.");
-
     }
 
     //댓글 조회

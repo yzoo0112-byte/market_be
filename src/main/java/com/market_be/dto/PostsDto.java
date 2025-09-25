@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -15,7 +17,7 @@ import java.time.LocalDateTime;
 @ToString
 public class PostsDto {
 
-    private Long id;
+    private Long postId;
 
     private Long userId;
 
@@ -29,11 +31,13 @@ public class PostsDto {
 
     private Long views;
 
+    private List<FilesDto> fileList;
+
     private String hashtag;
 
     public static PostsDto fromEntity(Posts posts) {
         return PostsDto.builder()
-                .id(posts.getId())
+                .postId(posts.getId())
                 .title(posts.getTitle())
                 .content(posts.getContent())
                 .hashtag(posts.getHashtag())
@@ -41,6 +45,18 @@ public class PostsDto {
                 .createAt(posts.getCreateAt())
                 .updateAt(posts.getUpdateAt())
                 .userId(posts.getUserId().getId())
+                .fileList(
+                        posts.getFileList().stream()
+                                .map(files -> FilesDto.builder()
+                                        .fileId(files.getFileId())
+                                        .fileOrgname(files.getFileOrgname())
+                                        .fileUrl(files.getFileUrl())
+                                        .fileName(files.getFileName())
+                                        .fileSize(files.getFileSize())
+                                        .build()
+                                )
+                                .collect(Collectors.toList())
+                )
                 .build();
     };
 

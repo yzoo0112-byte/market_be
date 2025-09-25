@@ -72,9 +72,16 @@ public class CommentsService {
         if (!isAdmin && !isAuthor) {
             throw new AccessDeniedException("댓글 수정 권한이 없습니다.");
         }
+        else{
+            Comments comments = Comments.builder()
+                    .comment(newContent)
+                    .build();
 
-        comment.setComment(newContent);
-        comment.setUpdatedAt(LocalDateTime.now());
+            comment.setComment(newContent);
+            comment.setUpdatedAt(LocalDateTime.now());
+            commentsRepository.save(comments);
+
+        }
     }
 
 }
