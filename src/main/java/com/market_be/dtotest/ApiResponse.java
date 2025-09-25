@@ -1,29 +1,26 @@
 package com.market_be.dtotest;
 
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.List;
+@Getter
+@Setter
+// API 응답용 DTO
 public class ApiResponse {
-    private List<ViewPost> data;
+    private List<Post> data;
     private int total;
 
-    public ApiResponse(List<ViewPost> data, int total) {
+    public ApiResponse(List<Post> data, int total) {
         this.data = data;
         this.total = total;
     }
 
-    public List<ViewPost> getData() {
+    public List<Post> getData() {
         return data;
-    }
-
-    public void setData(List<ViewPost> data) {
-        this.data = data;
     }
 
     public int getTotal() {
         return total;
-    }
-
-    public void setTotal(int total) {
-        this.total = total;
     }
 }
