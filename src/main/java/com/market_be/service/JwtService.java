@@ -38,6 +38,8 @@ public class JwtService {
             String loginId = parser.parseClaimsJws(header.replace(PREFIX, ""))
                     .getBody()
                     .getSubject();
+
+            System.out.println();
             if (loginId != null) {
                 return loginId;
             }
