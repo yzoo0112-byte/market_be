@@ -5,10 +5,7 @@ import com.market_be.entity.AppUser;
 import com.market_be.exception.CustomException;
 import com.market_be.exception.ErrorCode;
 import com.market_be.repository.AppUserRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,16 +44,19 @@ public class UserServiceImpl implements UserService {
     public MyPageDto getUserInfo(String loginId) {
         AppUser user = appUserRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
-        return new MyPageDto(
-                user.getLoginId(),
-                user.getPassword(),
-                user.getNickname(),
-                user.getUserName(),
-                user.getPhoneNum(),
-                user.getBirth(),
-                user.getEmail(),
-                user.getAddr()
-        );
+        
+        MyPageDto dto = new MyPageDto();
+        dto.setLoginId(user.getLoginId());
+        dto.setPassword(user.getPassword());
+        dto.setNickname(user.getNickname());
+        dto.setUserName(user.getUserName());
+        dto.setPhoneNum(user.getPhoneNum());
+        dto.setBirth(user.getBirth());
+        dto.setEmail(user.getEmail());
+        dto.setAddr(user.getAddr());
+
+        return dto;
+
     }
     //사용자가 마이페이지에서 개인정보를 수정했을 때, DB에 반영하는 기능
     @Override
