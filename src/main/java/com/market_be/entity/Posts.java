@@ -1,6 +1,5 @@
 package com.market_be.entity;
 
-import com.market_be.constant.HashtagType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,7 +33,7 @@ public class Posts {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column(updatable = false, nullable = false)
+    @Column(updatable = false, nullable = false, length = 0)
     private LocalDateTime createAt;
 
     @LastModifiedDate
@@ -45,4 +44,9 @@ public class Posts {
     @Column(length = 50)
     private String hashtag;
 
+    @Transient
+    private List<String> hashtags;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true ,fetch = FetchType.LAZY)
+    private List<Files> fileList;
 }

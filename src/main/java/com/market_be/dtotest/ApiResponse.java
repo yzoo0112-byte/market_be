@@ -1,29 +1,21 @@
 package com.market_be.dtotest;
 
+import com.market_be.dtotest.PostDTO;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Setter
 public class ApiResponse {
-    private List<ViewPost> data;
-    private int total;
+    private List<PostDTO> data;
+    private long total;
 
-    public ApiResponse(List<ViewPost> data, int total) {
+    public ApiResponse(List<PostDTO> data, long total) {
         this.data = data;
         this.total = total;
     }
 
-    public List<ViewPost> getData() {
-        return data;
-    }
-
-    public void setData(List<ViewPost> data) {
-        this.data = data;
-    }
-
-    public int getTotal() {
-        return total;
-    }
-
-    public void setTotal(int total) {
-        this.total = total;
-    }
+    // Getters and Setters
 }

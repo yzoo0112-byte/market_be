@@ -2,6 +2,7 @@ package com.market_be.repository;
 
 import com.market_be.entity.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
