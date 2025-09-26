@@ -6,7 +6,9 @@ import com.market_be.dtotest.PostDTO;
 import com.market_be.entity.AppUser;
 import com.market_be.entity.Posts;
 import com.market_be.repository.PostRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,16 +20,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final EntityManager entityManager;
 
     public Posts save(Posts posts) {
         return postRepository.save(posts);
@@ -36,6 +36,7 @@ public class PostService {
     public List<Posts> findAll() {
         return postRepository.findAll();
     }
+
     // ✅ 게시글 수정
     public Posts updatePost(Long postId, PostRequestDto dto, AppUser user) {
         Posts post = postRepository.findById(postId)
@@ -64,10 +65,23 @@ public class PostService {
         // Pageable 설정: 페이지, 사이즈, 정렬
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortOrder), mapSortKey(sortKey)));
 
-        // 키워드가 없으면 전체 게시글 조회, 있으면 Specification을 이용하여 검색
-        Page<Posts> postPage = keywords.isEmpty()
-                ? postRepository.findAll(pageable)
-                : postRepository.findAll(searchByKeywords(keywords), pageable);
+        // 키워드가 없으면 전체 게시글 조회, 있으면 `findBy` 메소드 호출하여 검색
+        Page<Posts> postPage;
+
+        if (keywords.isEmpty()) {
+            postPage = postRepository.findAll(pageable); // 키워드가 없으면 전체 검색
+        } else {
+            // 다중 검색 처리
+            if (keywords.size() == 1) {
+                postPage = postRepository.searchPostsByKeyword(keywords.get(0), pageable); // 하나의 키워드로 검색
+            } else if (keywords.size() == 2) {
+                postPage = postRepository.searchPostsByMultipleKeywords(keywords.get(0), keywords.get(1), pageable); // 두 개의 키워드로 검색
+            } else {
+                // N개의 키워드를 동적으로 처리하려면 Criteria API나 Specification을 사용하는 방법이 필요
+                // 이 부분은 예시 코드로 기본적으로 두 개의 키워드만 처리하도록 구성
+                postPage = postRepository.searchPostsByMultipleKeywords(keywords.get(0), keywords.get(1), pageable); // 임시로 2개의 키워드만 처리
+            }
+        }
 
         // DTO로 변환
         List<PostDTO> postDTOs = postPage.getContent().stream().map(post -> {
@@ -92,42 +106,7 @@ public class PostService {
             );
         }).collect(Collectors.toList());
 
-        // 결과 반환
         return new ApiResponse(postDTOs, postPage.getTotalElements());
-    }
-
-    // Specification<Posts>를 만드는 메소드
-     private Specification<Posts> searchByKeywords(List<String> keywords) {
-        return new Specification<Posts>() {
-            @Override
-            public Predicate toPredicate(Root<Posts> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                // `Posts` 엔티티와 `AppUser` 엔티티를 조인합니다.
-                Join<Posts, AppUser> user = root.join("id", JoinType.LEFT);  // userId 필드를 기준으로 AppUser와 조인
-
-                // 조건을 `OR`로 합칠 기본 조건을 생성합니다.
-                Predicate predicate = cb.conjunction(); // 기본 조건을 "true"로 설정
-
-                // 키워드마다 반복하며 조건을 `OR`로 합칩니다.
-                for (String keyword : keywords) {
-                    // 키워드가 `title`, `content`, `nickname`, `hashtag`에 포함되는지 체크
-                    Predicate titlePredicate = cb.like(cb.lower(root.get("title")), "%" + keyword.toLowerCase() + "%");
-                    Predicate contentPredicate = cb.like(cb.lower(root.get("content")), "%" + keyword.toLowerCase() + "%");
-                    Predicate nicknamePredicate = cb.like(cb.lower(user.get("nickname")), "%" + keyword.toLowerCase() + "%");  // nickname을 AppUser에서 가져옵니다.
-                    Predicate hashtagPredicate = cb.like(cb.lower(root.get("hashtag")), "%" + keyword.toLowerCase() + "%");
-
-                    // 각 키워드에 대한 조건을 `OR`로 묶기
-                    Predicate combinedPredicate = cb.or(titlePredicate, contentPredicate, nicknamePredicate, hashtagPredicate);
-
-                    // 모든 키워드를 `OR`로 결합 (기존 `predicate`와 합침)
-                    predicate = cb.or(predicate, combinedPredicate);
-
-                    query.orderBy(cb.desc(root.get("id")));
-                }
-
-                // 결과적으로 만들어진 `predicate`를 반환
-                return predicate;
-            }
-        };
     }
 
     // 정렬 키 매핑
@@ -135,7 +114,7 @@ public class PostService {
         return switch (sortKey) {
             case "postId" -> "id";
             case "title" -> "title";
-            case "nickname" -> "userId.nickname"; // 주의: join된 필드
+            case "nickname" -> "userId.nickname";
             case "views" -> "views";
             case "create_at" -> "createAt";
             case "update_at" -> "updateAt";
@@ -144,3 +123,4 @@ public class PostService {
     }
 
 }
+
