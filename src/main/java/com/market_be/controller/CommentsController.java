@@ -11,6 +11,7 @@ import com.market_be.service.CommentsService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -22,27 +23,49 @@ public class CommentsController {
     private final CommentsService commentsService;
 
     // 댓글 작성
-    @PostMapping("/{Id}")
-    public ResponseEntity<?> createComment(@PathVariable Long Id, @RequestBody CommentsDto dto){
-        commentsService.createComment(
-                Id,
-                dto.getComment(),
-                dto.getUserId()
-        );
-        return ResponseEntity.ok("댓글이 등록되었습니다.");
+//    @PostMapping("/{id}")
+//    public ResponseEntity<?> createComment(@PathVariable Long Id, @RequestBody CommentsDto dto){
+//        commentsService.createComment(
+//                Id,
+//                dto.getComment(),
+//                dto.getUserId()
+//        );
+//        return ResponseEntity.ok("댓글이 등록되었습니다.");
+//    }
+
+    @PostMapping("/{id}/comment")
+    public ResponseEntity<?> createComment(
+            @PathVariable Long id,
+            @RequestBody CommentsDto dto
+
+    ) {
+       commentsService.createComment(id, dto.getComment(), dto.getUserId());
+
+        return ResponseEntity.status(201).build();
     }
 
+
+
+
     //댓글 조회
-    @GetMapping("/{Id}/comment")
+    @GetMapping("/{id}/comment")
     public ResponseEntity<?> getCommentsByBoardId(@PathVariable Long Id) {
         return ResponseEntity.ok(commentsService.getCommentsByPostId(Id));
     }
 
     //댓글 수정
-    @PutMapping("/{id}/{commentId}")
+    @PutMapping("/{id}/comment/{commentId}")
     public ResponseEntity<?> updateComment(@PathVariable Long id, @RequestBody String newContent, @RequestBody CommentsDto dto) {
         commentsService.updateComment(id, newContent, dto.getUserId());
         return ResponseEntity.ok("댓글이 수정되었습니다.");
+    }
+
+    // 댓글 삭제
+    @DeleteMapping("/{id}/comment/{commentId}")
+    public ResponseEntity<?> deleteComment(@PathVariable Long id, @PathVariable Long commentId, Authentication authentication) {
+        Long userId = Long.valueOf(authentication.getName());
+        commentsService.deleteComment(commentId, userId);
+        return ResponseEntity.noContent().build();
     }
 
 }
