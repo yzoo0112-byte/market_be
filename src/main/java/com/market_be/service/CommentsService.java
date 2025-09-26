@@ -14,10 +14,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,16 +27,16 @@ public class CommentsService {
     private final PostsRepository postsRepository;
 
     // 댓글 생성
-    public void createComment(Long id, String comment, Long userId){
-        Posts posts = postsRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    public Comments createComment(Long postId, String comment, Long userId){
+        Posts posts = postsRepository.findById(postId).orElseThrow(EntityNotFoundException::new);
         AppUser user = appUserRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         Comments comments = Comments.builder()
                 .comment(comment)
                 .postId(posts)
                 .userId(user)
-
                 .build();
         commentsRepository.save(comments);
+        return comments;
     }
 
     // 댓글 추적
@@ -48,6 +46,7 @@ public class CommentsService {
         List<CommentsDto> dtoList = new ArrayList<>();
         for (Comments comment : list) {
             CommentsDto commentDto = CommentsDto.builder()
+                    .commentId(comment.getId())
                     .comment(comment.getComment())
                     .nickname(comment.getUserId().getNickname())
                     .postId(postId)
@@ -83,5 +82,23 @@ public class CommentsService {
 
         }
     }
+
+    // 댓글 삭제
+    public void deleteComment(Long commentId, Long userId) {
+        Comments comment = commentsRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+        AppUser user = appUserRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("유저를 찾을 수 없습니다."));
+
+        boolean isAdmin = user.getRole() == Role.ADMIN;
+        boolean isAuthor = comment.getUserId().getId().equals(userId);
+
+        if (!isAdmin && !isAuthor) {
+            throw new AccessDeniedException("댓글 삭제 권한이 없습니다.");
+        }
+
+        commentsRepository.delete(comment);
+    }
+
 
 }

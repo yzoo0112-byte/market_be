@@ -1,12 +1,11 @@
 package com.market_be.dto;
 
+import com.market_be.entity.Comments;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -26,4 +25,16 @@ public class CommentsDto {
     private LocalDateTime updatedAt;
 
     private String nickname;
+
+    public CommentsDto of(Comments comments){
+        return CommentsDto.builder()
+                .commentId(comments.getId())
+                .postId(comments.getPostId().getId())
+                .userId(comments.getUserId().getId())
+                .comment(comments.getComment())
+                .createdAt(comments.getCreatedAt())
+                .updatedAt(comments.getUpdatedAt())
+                .nickname(comments.getUserId().getNickname())
+                .build();
+    }
 }

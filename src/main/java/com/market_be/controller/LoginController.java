@@ -2,10 +2,12 @@ package com.market_be.controller;
 
 import com.market_be.content.Role;
 import com.market_be.dto.AccountCredentials;
+import com.market_be.dto.AppUserDto;
 import com.market_be.dto.SignupRequest;
 import com.market_be.entity.AppUser;
 import com.market_be.repository.AppUserRepository;
 import com.market_be.service.JwtService;
+import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,10 +15,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -60,9 +65,14 @@ public class LoginController {
                 credentials.getLoginId(), credentials.getPassword());
         Authentication authentication = authenticationManager.authenticate(token);
         String jwtToken = jwtService.generateToken(authentication.getName());
+        AppUser appUser = appUserRepository.findByLoginId(credentials.getLoginId())
+                .orElseThrow(EntityExistsException::new);
+        Map<String, Object> result = new HashMap<>();
+        result.put("userId", appUser.getId());
+        result.put("nickname", appUser.getNickname());
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
-                .build();
+                .body(result);
 
     }
 
