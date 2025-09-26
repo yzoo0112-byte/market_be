@@ -46,7 +46,7 @@ public class LoginController {
                 .email(request.getEmail())
                 .addr(request.getAddr())
                 .role(Role.USER)
-                .lastVisiteDate(new Date())
+                .lastVisitDate(new Date())
                 .build();
 
         appUserRepository.save(user);

@@ -47,6 +47,6 @@ public class AppUser {
     @Column(nullable = false)
     private Role role;
 
-    private Date lastVisiteDate;
+    private Date lastVisitDate;
 
 }

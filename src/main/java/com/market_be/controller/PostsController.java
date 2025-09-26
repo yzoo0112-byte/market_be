@@ -15,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,33 +29,35 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/post")
 public class PostsController {
+
     private final PostsRepository postsRepository;
     private final PostsService postsService;
     private final PostService postService;
     private final FilesRepository filesRepository;
     private final AppUserRepository appUserRepository;
 
+    // ✅ 게시글 단일 조회
     @GetMapping("/{id}")
     public ResponseEntity<PostsDto> findById(@PathVariable Long id) {
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."));
-
         PostsDto dto = PostsDto.fromEntity(posts);
-
         return ResponseEntity.ok(dto);
     }
 
+    // ✅ 게시글 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id) {
         postsService.deletePost(id);
         return ResponseEntity.ok().body(id);
     }
 
+    // ✅ 게시글 등록
     @PostMapping
     public ResponseEntity<PostResponseDto> createPost(@ModelAttribute PostRequestDto dto,
-                                                      @AuthenticationPrincipal String loginId
-    ) throws IOException {
+                                                      @AuthenticationPrincipal String loginId) throws IOException {
         System.out.println("createPost 호출됨");
+
         AppUser user = appUserRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자 정보 없음"));
 
@@ -96,7 +96,6 @@ public class PostsController {
                 fileEntity.setImageYn(contentType != null && contentType.startsWith("image") ? "Y" : "N");
 
                 filesRepository.save(fileEntity);
-
             }
         }
 
@@ -111,4 +110,74 @@ public class PostsController {
         return ResponseEntity.ok(response);
     }
 
+    // ✅ 게시글 수정
+    @PutMapping("/{id}")
+    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id,
+                                                      @ModelAttribute PostRequestDto dto,
+                                                      @AuthenticationPrincipal String loginId) throws IOException {
+        System.out.println("updatePost 호출됨");
+
+        AppUser user = appUserRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자 정보 없음"));
+
+        Posts post = postsRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."));
+
+        if (!post.getUserId().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "수정 권한이 없습니다.");
+        }
+
+        post.setTitle(dto.getTitle());
+        post.setHashtag(dto.getHashtag());
+        post.setContent(dto.getContent());
+        post.setUpdateAt(LocalDateTime.now());
+
+        Posts updatedPost = postService.save(post);
+
+        // 기존 파일 삭제
+        List<Files> existingFiles = filesRepository.findByPostId(id);
+        for (Files file : existingFiles) {
+            filesRepository.delete(file);
+            // 실제 파일 삭제는 필요 시 구현
+        }
+
+        List<String> filePaths = new ArrayList<>();
+
+        if (dto.getFiles() != null) {
+            for (MultipartFile file : dto.getFiles()) {
+                String uploadDir = System.getProperty("user.dir") + "/uploads";
+                File directory = new File(uploadDir);
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+
+                String orgName = file.getOriginalFilename();
+                String fileName = System.currentTimeMillis() + "_" + orgName;
+                String filePath = uploadDir + "/" + fileName;
+                file.transferTo(new File(filePath));
+                filePaths.add(filePath);
+
+                Files fileEntity = new Files();
+                fileEntity.setPost(updatedPost);
+                fileEntity.setFileName(fileName);
+                fileEntity.setFileOrgname(orgName);
+                fileEntity.setFileUrl("/uploads/" + fileName);
+                fileEntity.setFileSize(file.getSize());
+                String contentType = file.getContentType();
+                fileEntity.setImageYn(contentType != null && contentType.startsWith("image") ? "Y" : "N");
+
+                filesRepository.save(fileEntity);
+            }
+        }
+
+        PostResponseDto response = new PostResponseDto(
+                updatedPost.getId(),
+                updatedPost.getTitle(),
+                updatedPost.getHashtag(),
+                updatedPost.getContent(),
+                filePaths
+        );
+
+        return ResponseEntity.ok(response);
+    }
 }

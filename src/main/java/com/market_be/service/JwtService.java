@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
@@ -15,10 +16,12 @@ import java.util.Date;
 public class JwtService {
 
     static final String PREFIX = "Bearer ";
-    static final Long EXPIRATION_TIME = 24*60*60*1000L;
-    static final Key SIGNING_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    static final Long EXPIRATION_TIME = 24 * 60 * 60 * 1000L;
 
-    // username(ID)를 받아서 JWT 생성
+    // ✅ 고정된 시크릿 키 사용
+    private static final String SECRET = "your-very-secure-secret-key-should-be-long";
+    private static final Key SIGNING_KEY = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+
     public String generateToken(String loginId) {
         return Jwts.builder()
                 .setSubject(loginId)
@@ -27,22 +30,15 @@ public class JwtService {
                 .compact();
     }
 
-    // JWT를 받아서 username(ID)를 반환
     public String parseToken(HttpServletRequest request) {
-
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (header != null && header.startsWith(PREFIX)) {
             JwtParser parser = Jwts.parserBuilder()
                     .setSigningKey(SIGNING_KEY)
                     .build();
-            String loginId = parser.parseClaimsJws(header.replace(PREFIX, ""))
+            return parser.parseClaimsJws(header.replace(PREFIX, ""))
                     .getBody()
                     .getSubject();
-
-            System.out.println();
-            if (loginId != null) {
-                return loginId;
-            }
         }
         return null;
     }
