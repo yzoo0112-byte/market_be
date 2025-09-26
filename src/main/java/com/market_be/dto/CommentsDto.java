@@ -16,7 +16,7 @@ public class CommentsDto {
 
     private Long commentId;
 
-    private Long userId;
+    private String userId;
 
     private String comment;
 
@@ -30,7 +30,7 @@ public class CommentsDto {
         return CommentsDto.builder()
                 .commentId(comments.getId())
                 .postId(comments.getPostId().getId())
-                .userId(comments.getUserId().getId())
+                .userId(comments.getUserId().getLoginId())
                 .comment(comments.getComment())
                 .createdAt(comments.getCreatedAt())
                 .updatedAt(comments.getUpdatedAt())
