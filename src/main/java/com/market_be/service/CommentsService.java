@@ -27,9 +27,9 @@ public class CommentsService {
     private final PostsRepository postsRepository;
 
     // 댓글 생성
-    public Comments createComment(Long postId, String comment, Long userId){
+    public Comments createComment(Long postId, String comment, String userId){
         Posts posts = postsRepository.findById(postId).orElseThrow(EntityNotFoundException::new);
-        AppUser user = appUserRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+        AppUser user = appUserRepository.findByLoginId(userId).orElseThrow(EntityNotFoundException::new);
         Comments comments = Comments.builder()
                 .comment(comment)
                 .postId(posts)
@@ -59,39 +59,39 @@ public class CommentsService {
     }
 
     //댓글 수정
-    public void updateComment(Long commentId, String newContent, Long userId) {
+    public void updateComment(Long commentId, String newContent, String userId) {
         Comments comment = commentsRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
-        AppUser user = appUserRepository.findById(userId)
+        AppUser user = appUserRepository.findByLoginId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("유저를 찾을 수 없습니다."));
 
         boolean isAdmin = user.getRole() == Role.ADMIN;
-        boolean isAuthor = comment.getUserId().getId().equals(userId);
+        boolean isAuthor = comment.getUserId().getLoginId().equals(userId);
 
         if (!isAdmin && !isAuthor) {
             throw new AccessDeniedException("댓글 수정 권한이 없습니다.");
         }
         else{
-            Comments comments = Comments.builder()
-                    .comment(newContent)
-                    .build();
+//            Comments comments = Comments.builder()
+//                    .comment(newContent)
+//                    .build();
 
             comment.setComment(newContent);
             comment.setUpdatedAt(LocalDateTime.now());
-            commentsRepository.save(comments);
+//            commentsRepository.save(comments);
 
         }
     }
 
     // 댓글 삭제
-    public void deleteComment(Long commentId, Long userId) {
+    public void deleteComment(Long commentId, String userId) {
         Comments comment = commentsRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
-        AppUser user = appUserRepository.findById(userId)
+        AppUser user = appUserRepository.findByLoginId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("유저를 찾을 수 없습니다."));
 
         boolean isAdmin = user.getRole() == Role.ADMIN;
-        boolean isAuthor = comment.getUserId().getId().equals(userId);
+        boolean isAuthor = comment.getUserId().getLoginId().equals(userId);
 
         if (!isAdmin && !isAuthor) {
             throw new AccessDeniedException("댓글 삭제 권한이 없습니다.");
