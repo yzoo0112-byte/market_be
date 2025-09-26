@@ -35,9 +35,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/signup/**", "/members/**", "/item/**", "/images/**").permitAll()
-                        .requestMatchers("/manage/**").hasRole("ADMIN") // 또는 hasAuthority("ADMIN")
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers("/", "/login", "/signup/**").permitAll()
+                        .requestMatchers("/manage/**").hasRole("ADMIN")
                         .requestMatchers("/mypage/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/post").authenticated()
                         .anyRequest().permitAll()

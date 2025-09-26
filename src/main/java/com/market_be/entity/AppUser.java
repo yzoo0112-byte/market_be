@@ -44,7 +44,7 @@ public class AppUser {
     private String addr;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)
+    @Column(nullable = false)
     private Role role;
 
     private Date lastVisitDate;
