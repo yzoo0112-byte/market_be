@@ -8,6 +8,7 @@ import com.market_be.repository.AppUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -70,5 +71,15 @@ public class UserServiceImpl implements UserService {
         user.setEmail(dto.getEmail());
         user.setAddr(dto.getAddr());
         appUserRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUser(String loginId) {
+        AppUser user = appUserRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다"));
+
+        appUserRepository.delete(user);
+        appUserRepository.flush(); // 즉시 반영
     }
 }

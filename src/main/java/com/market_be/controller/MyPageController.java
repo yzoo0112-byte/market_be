@@ -1,12 +1,14 @@
 package com.market_be.controller;
 
 import com.market_be.dto.MyPageDto;
+import com.market_be.entity.AppUser;
 import com.market_be.exception.CustomException;
 import com.market_be.service.JwtService;
 import com.market_be.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -65,4 +67,23 @@ public class MyPageController {
         userService.updateUserInfo(loginId, myPageDto);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser(@RequestHeader("Authorization") String authHeader) {
+        // 예: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(400).body("Authorization 헤더가 잘못되었습니다.");
+        }
+
+        String token = authHeader.substring(7);
+        String loginId = jwtService.parseToken(token);
+
+        if (loginId == null || loginId.isBlank()) {
+            return ResponseEntity.status(400).body("토큰 파싱 실패");
+        }
+
+        userService.deleteUser(loginId);
+        return ResponseEntity.ok("삭제 완료");
+    }
+
 }
