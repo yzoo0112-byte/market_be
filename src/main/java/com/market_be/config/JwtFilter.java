@@ -37,8 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (jwtToken != null && jwtToken.startsWith("Bearer ")) {
-            String token = jwtToken.substring(7); // "Bearer " 제거
-            String loginId = jwtService.parseToken(token); // ✅ 올바른 호출
+            String loginId = jwtService.parseToken(request); // ✅ 올바른 호출
 
             if (loginId != null) {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(

@@ -31,15 +31,24 @@ public class JwtService {
                 .compact();
     }
 
-    public String parseToken(HttpServletRequest request) {
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header != null && header.startsWith(PREFIX)) {
+    public String parseToken(String token) {
+        try {
             JwtParser parser = Jwts.parserBuilder()
                     .setSigningKey(SIGNING_KEY)
                     .build();
-            return parser.parseClaimsJws(header.replace(PREFIX, ""))
-                    .getBody()
-                    .getSubject();
+            return parser.parseClaimsJws(token).getBody().getSubject();
+        } catch (JwtException e) {
+            System.err.println("JWT 파싱 실패: " + e.getMessage());
+            return null;
         }
+    }
+
+    public String parseToken(HttpServletRequest request) {
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring("Bearer ".length());
+            return parseToken(token); // 핵심 로직 재사용
+        }
+        return null;
     }
 }
