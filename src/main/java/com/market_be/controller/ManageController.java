@@ -13,12 +13,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ManageController {
 
-    private final ManageUserService adminUserService;
+    private final ManageUserService manageUserService;
 
     // 회원 전체 조회 API (관리자만 접근 가능)
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
     public List<AppUserDto> getAllUsers() {
-        return adminUserService.getAllUsers();
+        return manageUserService.getAllUsers();
     }
 }

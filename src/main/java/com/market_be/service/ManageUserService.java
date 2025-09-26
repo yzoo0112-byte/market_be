@@ -1,5 +1,6 @@
 package com.market_be.service;
 
+import com.market_be.content.Role;
 import com.market_be.dto.AppUserDto;
 import com.market_be.entity.AppUser;
 import com.market_be.repository.AppUserRepository;
@@ -35,8 +36,10 @@ public class ManageUserService {
                                         ? null
                                         : new java.sql.Date(user.getLastVisitDate().getTime())
                         )
+                        .role(Role.valueOf(user.getRole().name().replace("ROLE_", ""))) // 여기 추가
                         .build()
                 )
                 .collect(Collectors.toList());
     }
+
 }

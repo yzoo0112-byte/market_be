@@ -50,7 +50,7 @@ public class LoginController {
                 .birth(request.getBirth())
                 .email(request.getEmail())
                 .addr(request.getAddr())
-                .role(Role.ROLE_USER) // USER에서 ROLE_USER으로 수정함
+                .role(Role.USER) // USER에서 ROLE_USER으로 수정함
                 .lastVisitDate(new Date())
                 .build();
 

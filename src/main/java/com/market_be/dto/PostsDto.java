@@ -58,6 +58,6 @@ public class PostsDto {
                                 .collect(Collectors.toList())
                 )
                 .build();
-    };
+    }
 
 }

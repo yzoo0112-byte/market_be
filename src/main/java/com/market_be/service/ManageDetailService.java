@@ -3,6 +3,7 @@ package com.market_be.service;
 import com.market_be.entity.AppUser;
 import com.market_be.repository.AppUserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@Primary
 @RequiredArgsConstructor
 public class ManageDetailService implements UserDetailsService {
 
@@ -23,7 +25,7 @@ public class ManageDetailService implements UserDetailsService {
         return User.builder()
                 .username(appUser.getLoginId())
                 .password(appUser.getPassword())
-                .roles(appUser.getRole().name()) // 예: ROLE_ADMIN, ROLE_USER
+                .roles(appUser.getRole().name())
                 .build();
     }
 }
