@@ -35,9 +35,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(request -> request
-                        .requestMatchers("/", "/login", "/signup/**").permitAll()
-                        .requestMatchers("/manage/**").hasRole("ADMIN")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/login", "/signup/**", "/members/**", "/item/**", "/images/**").permitAll()
+                        .requestMatchers("/manage/**").hasRole("ADMIN") // 또는 hasAuthority("ADMIN")
                         .requestMatchers("/mypage/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/post").authenticated()
                         .anyRequest().permitAll()
@@ -51,7 +51,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedOrigins(List.of("http://localhost:5173")); // 프론트엔드 주소
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -71,3 +71,4 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 }
+

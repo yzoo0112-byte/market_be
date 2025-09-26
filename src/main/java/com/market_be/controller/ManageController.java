@@ -1,31 +1,24 @@
 package com.market_be.controller;
 
-import com.market_be.dto.UserListDto;
-import com.market_be.entity.AppUser;
-import com.market_be.repository.AppUserRepository;
+import com.market_be.dto.AppUserDto;
+import com.market_be.service.ManageUserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/manage")
+@RequiredArgsConstructor
 public class ManageController {
 
-    private final AppUserRepository appUserRepository;
+    private final ManageUserService adminUserService;
 
+    // 회원 전체 조회 API (관리자만 접근 가능)
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
-    public ResponseEntity<List<UserListDto>> getAllUsers() {
-        List<AppUser> users = appUserRepository.findAll();
-        List<UserListDto> dtos = users.stream()
-                .map(UserListDto::fromEntity)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+    public List<AppUserDto> getAllUsers() {
+        return adminUserService.getAllUsers();
     }
 }
