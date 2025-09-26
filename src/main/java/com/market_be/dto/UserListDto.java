@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -18,7 +19,7 @@ public class UserListDto {
     private String birth;
     private String email;
     private String addr;
-    private Date lastVisitDate;
+    private LocalDate lastVisitDate;
 
     public static UserListDto fromEntity(AppUser user) {
         UserListDto dto = new UserListDto();

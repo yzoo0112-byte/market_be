@@ -5,7 +5,9 @@ import com.market_be.dto.AccountCredentials;
 import com.market_be.dto.AppUserDto;
 import com.market_be.dto.SignupRequest;
 import com.market_be.entity.AppUser;
+import com.market_be.entity.Visit;
 import com.market_be.repository.AppUserRepository;
+import com.market_be.repository.VisitRepository;
 import com.market_be.service.JwtService;
 import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +19,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +37,7 @@ public class LoginController {
     private final AuthenticationManager authenticationManager;
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final VisitRepository visitRepository;
 
 
     @PostMapping("/signup")
@@ -51,7 +56,7 @@ public class LoginController {
                 .email(request.getEmail())
                 .addr(request.getAddr())
                 .role(Role.USER)
-                .lastVisitDate(new Date())
+//                .lastVisitDate(LocalDate.now())
                 .build();
 
 
@@ -60,6 +65,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
+    @Transactional
     public ResponseEntity<?> login(@RequestBody AccountCredentials credentials) {
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
@@ -68,6 +74,25 @@ public class LoginController {
         String jwtToken = jwtService.generateToken(authentication.getName());
         AppUser appUser = appUserRepository.findByLoginId(credentials.getLoginId())
                 .orElseThrow(EntityExistsException::new);
+        //1. 로그인하는 유저의 마지막 접속 일자 조회
+        LocalDate lastVisitDate = appUser.getLastVisitDate();
+        //2. 마지막 접속 일자가 오늘이 아닌 경우
+        if(lastVisitDate == null || !lastVisitDate.equals(LocalDate.now())) {
+            //3. 마지막 접속 일자 오늘로 변경
+            appUser.setLastVisitDate(LocalDate.now());
+            //4. visit 테이블 조회
+            Visit visit = visitRepository.findByVisitDate(LocalDate.now());
+            //5. 오늘자 방문 레코드 자체가 없는 경우 카운트 1을 갖는 레코드 생성
+            if(visit == null) {
+                Visit newVisit = Visit.builder()
+                        .visitDate(LocalDate.now())
+                        .visits(1)
+                        .build();
+                visitRepository.save(newVisit);
+            }else { //6. 오늘자 방문 레코드가 이미 존재하는 경우 기존 카운트 + 1
+                visit.setVisits(visit.getVisits() + 1);
+            }
+        }
         Map<String, Object> result = new HashMap<>();
         result.put("userId", appUser.getId());
         result.put("nickname", appUser.getNickname());

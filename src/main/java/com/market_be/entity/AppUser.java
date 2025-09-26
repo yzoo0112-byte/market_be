@@ -4,6 +4,7 @@ import com.market_be.content.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -47,6 +48,6 @@ public class AppUser {
     @Column(nullable = false)
     private Role role;
 
-    private Date lastVisitDate;
+    private LocalDate lastVisitDate;
 
 }
