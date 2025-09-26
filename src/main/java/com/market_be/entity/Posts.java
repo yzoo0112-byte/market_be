@@ -44,6 +44,8 @@ public class Posts {
     @Column(length = 50)
     private String hashtag;
 
+    @Transient
+    private List<String> hashtags;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true ,fetch = FetchType.LAZY)
     private List<Files> fileList;
