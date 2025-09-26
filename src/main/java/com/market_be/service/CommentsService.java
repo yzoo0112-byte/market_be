@@ -65,7 +65,7 @@ public class CommentsService {
         AppUser user = appUserRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("유저를 찾을 수 없습니다."));
 
-        boolean isAdmin = user.getRole() == Role.ADMIN;
+        boolean isAdmin = user.getRole() == Role.ROLE_ADMIN; // ADMIN에서 ROLE_ADMIN으로 수정함
         boolean isAuthor = comment.getUserId().getId().equals(userId);
 
         if (!isAdmin && !isAuthor) {
@@ -90,7 +90,7 @@ public class CommentsService {
         AppUser user = appUserRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("유저를 찾을 수 없습니다."));
 
-        boolean isAdmin = user.getRole() == Role.ADMIN;
+        boolean isAdmin = user.getRole() == Role.ROLE_ADMIN; // ADMIN에서 ROLE_ADMIN으로 수정함
         boolean isAuthor = comment.getUserId().getId().equals(userId);
 
         if (!isAdmin && !isAuthor) {

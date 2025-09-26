@@ -1,7 +1,6 @@
 package com.market_be.content;
 
 public enum Role {
-    ADMIN, USER
-
-
+    ROLE_USER,
+    ROLE_ADMIN
 }

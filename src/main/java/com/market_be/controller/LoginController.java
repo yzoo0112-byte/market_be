@@ -50,9 +50,10 @@ public class LoginController {
                 .birth(request.getBirth())
                 .email(request.getEmail())
                 .addr(request.getAddr())
-                .role(Role.USER)
+                .role(Role.ROLE_USER) // USER에서 ROLE_USER으로 수정함
                 .lastVisitDate(new Date())
                 .build();
+
 
         appUserRepository.save(user);
         return ResponseEntity.ok("회원가입 성공");
