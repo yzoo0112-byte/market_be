@@ -1,10 +1,12 @@
 package com.market_be.service;
 
+import com.market_be.dto.PostRequestDto;
 import com.market_be.dtotest.ApiResponse;
 import com.market_be.dtotest.PostDTO;
 import com.market_be.entity.AppUser;
 import com.market_be.entity.Posts;
 import com.market_be.repository.PostRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -50,7 +52,6 @@ public class PostService {
 
         return postRepository.save(post);
     }
-}
 
 
     @Transactional(readOnly = true)
