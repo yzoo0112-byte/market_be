@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -65,9 +66,14 @@ public class LoginController {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                 credentials.getLoginId(), credentials.getPassword());
         Authentication authentication = authenticationManager.authenticate(token);
-        String jwtToken = jwtService.generateToken(authentication.getName());
+
         AppUser appUser = appUserRepository.findByLoginId(credentials.getLoginId())
                 .orElseThrow(EntityExistsException::new);
+
+        List<String> roles = List.of("ROLE_" + appUser.getRole().name());  // roles 변수 선언 및 초기화
+
+        String jwtToken = jwtService.generateToken(credentials.getLoginId(), roles);
+
         Map<String, Object> result = new HashMap<>();
         result.put("userId", appUser.getId());
         result.put("nickname", appUser.getNickname());
