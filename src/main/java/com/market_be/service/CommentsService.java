@@ -1,6 +1,7 @@
 package com.market_be.service;
 
 import com.market_be.content.Role;
+import com.market_be.dto.CommentRequest;
 import com.market_be.dto.CommentsDto;
 import com.market_be.entity.AppUser;
 import com.market_be.entity.Comments;
@@ -50,6 +51,7 @@ public class CommentsService {
                     .comment(comment.getComment())
                     .nickname(comment.getUserId().getNickname())
                     .postId(postId)
+                    .userId(comment.getUserId().getLoginId())
                     .createdAt(comment.getCreatedAt().withNano(0))
                     .updatedAt(comment.getUpdatedAt() != null ? comment.getUpdatedAt().withNano(0) : null)
                     .build();
@@ -59,14 +61,14 @@ public class CommentsService {
     }
 
     //댓글 수정
-    public void updateComment(Long commentId, String newContent, String userId) {
-        Comments comment = commentsRepository.findById(commentId)
+    public void updateComment(CommentRequest dto, String loginId) {
+        Comments comment = commentsRepository.findById(dto.getCommentId())
                 .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
-        AppUser user = appUserRepository.findByLoginId(userId)
+        AppUser user = appUserRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new EntityNotFoundException("유저를 찾을 수 없습니다."));
 
         boolean isAdmin = user.getRole() == Role.ADMIN;
-        boolean isAuthor = comment.getUserId().getLoginId().equals(userId);
+        boolean isAuthor = comment.getUserId().getLoginId().equals(loginId);
 
         if (!isAdmin && !isAuthor) {
             throw new AccessDeniedException("댓글 수정 권한이 없습니다.");
@@ -76,7 +78,7 @@ public class CommentsService {
 //                    .comment(newContent)
 //                    .build();
 
-            comment.setComment(newContent);
+            comment.setComment(dto.getComment());
             comment.setUpdatedAt(LocalDateTime.now());
 //            commentsRepository.save(comments);
 

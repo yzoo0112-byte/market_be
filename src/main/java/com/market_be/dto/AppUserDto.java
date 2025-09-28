@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -24,7 +24,7 @@ public class AppUserDto {
     private String password;
 
     private String phoneNum;
-
+    private String role;
     private String birth;
 
     private String email;

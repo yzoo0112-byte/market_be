@@ -17,7 +17,8 @@ public class PostsService {
 
     // ✅ 게시글 삭제
     public void deletePost(Long id) {
-        Posts posts = postsRepository.findById(id)
+
+        Posts posts = postsRepository.findByIdIncludingDeleted(id)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
         postsRepository.delete(posts);
     }
@@ -38,4 +39,22 @@ public class PostsService {
 
         return postsRepository.save(post);
     }
+
+    // 게시글 삭제(휴지통)
+    public void softDelete(Long id) {
+        Posts post = postsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+        post.setDeleted(true);
+        postsRepository.save(post);
+    }
+
+    // 게시글 복구
+    public void restore(Long id) {
+        Posts post = postsRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+        post.setDeleted(false);
+        postsRepository.save(post);
+    }
+
+
 }
