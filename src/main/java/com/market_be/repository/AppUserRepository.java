@@ -15,4 +15,6 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
     boolean existsByNickname(String nickname);
 
+    boolean existsByPhoneNum(String phoneNum);
+
 }
