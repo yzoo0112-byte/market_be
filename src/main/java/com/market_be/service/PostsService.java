@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,10 +21,14 @@ public class PostsService {
 
     // ✅ 게시글 삭제
     public void deletePost(Long id) {
-       likesRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         Posts posts = postsRepository.findByIdIncludingDeleted(id)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+
+        List<Likes> likes = likesRepository.findByPostId(posts);
+        likesRepository.deleteAll(likes);
+
         postsRepository.delete(posts);
+
     }
 
     // ✅ 게시글 수정

@@ -114,7 +114,8 @@ public class PostService {
                     post.getUpdateAt(),
                     post.getViews(),
                     hashtags,
-                    nickname
+                    nickname,
+                    post.isDeleted()
             );
         }).collect(Collectors.toList());
 

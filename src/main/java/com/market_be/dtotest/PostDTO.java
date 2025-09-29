@@ -19,10 +19,11 @@ public class PostDTO {
     private Long views;
     private List<String> hashtags;  // String -> List<String> 형태로 변환
     private String nickname;
+    private boolean deleted;
 
     // Constructor
     public PostDTO(Long postId, String title, String content, LocalDateTime create_at,
-                   LocalDateTime update_at, Long views, List<String> hashtags, String nickname) {
+                   LocalDateTime update_at, Long views, List<String> hashtags, String nickname, boolean deleted) {
         this.postId = postId;
         this.title = title;
         this.content = content;
@@ -31,6 +32,7 @@ public class PostDTO {
         this.views = views;
         this.hashtags = hashtags;
         this.nickname = nickname;
+        this.deleted = deleted;
     }
 
 
