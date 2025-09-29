@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class JwtService {
@@ -23,9 +24,10 @@ public class JwtService {
     private static final String SECRET = "your-very-secure-secret-key-should-be-long";
     private static final Key SIGNING_KEY = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
-    public String generateToken(String loginId) {
+    public String generateToken(String loginId,  List<String> roles) {
         return Jwts.builder()
                 .setSubject(loginId)
+                .claim("roles", roles)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SIGNING_KEY)
                 .compact();
@@ -51,4 +53,18 @@ public class JwtService {
         }
         return null;
     }
+
+    public String parseTokenFromTokenOnly(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(SIGNING_KEY)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();   // loginId 반환
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

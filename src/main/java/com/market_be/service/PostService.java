@@ -69,18 +69,30 @@ public class PostService {
         Page<Posts> postPage;
 
         if (keywords.isEmpty()) {
-            postPage = postRepository.findAll(pageable); // 키워드가 없으면 전체 검색
+            postPage = postRepository.findAll(pageable);
+        } else if (keywords.size() == 1) {
+            postPage = postRepository.searchPostsByKeyword(keywords.get(0), pageable);
+        } else if (keywords.size() == 2) {
+            postPage = postRepository.searchPostsByMultipleKeywords2(
+                    keywords.get(0), keywords.get(1), pageable);
+        } else if (keywords.size() == 3) {
+            postPage = postRepository.searchPostsByMultipleKeywords3(
+                    keywords.get(0), keywords.get(1), keywords.get(2), pageable);
+        } else if (keywords.size() == 4) {
+            postPage = postRepository.searchPostsByMultipleKeywords4(
+                    keywords.get(0), keywords.get(1), keywords.get(2), keywords.get(3), pageable);
+        } else if (keywords.size() == 5) {
+            postPage = postRepository.searchPostsByMultipleKeywords5(
+                    keywords.get(0), keywords.get(1), keywords.get(2), keywords.get(3), keywords.get(4), pageable);
+        } else if (keywords.size() == 6) {
+            postPage = postRepository.searchPostsByMultipleKeywords6(
+                    keywords.get(0), keywords.get(1), keywords.get(2), keywords.get(3), keywords.get(4), keywords.get(5), pageable);
+        } else if (keywords.size() == 7) {
+            postPage = postRepository.searchPostsByMultipleKeywords7(
+                    keywords.get(0), keywords.get(1), keywords.get(2), keywords.get(3), keywords.get(4),
+                    keywords.get(5), keywords.get(6), pageable);
         } else {
-            // 다중 검색 처리
-            if (keywords.size() == 1) {
-                postPage = postRepository.searchPostsByKeyword(keywords.get(0), pageable); // 하나의 키워드로 검색
-            } else if (keywords.size() == 2) {
-                postPage = postRepository.searchPostsByMultipleKeywords(keywords.get(0), keywords.get(1), pageable); // 두 개의 키워드로 검색
-            } else {
-                // N개의 키워드를 동적으로 처리하려면 Criteria API나 Specification을 사용하는 방법이 필요
-                // 이 부분은 예시 코드로 기본적으로 두 개의 키워드만 처리하도록 구성
-                postPage = postRepository.searchPostsByMultipleKeywords(keywords.get(0), keywords.get(1), pageable); // 임시로 2개의 키워드만 처리
-            }
+            throw new IllegalArgumentException("검색 키워드는 최대 10개까지 입력 가능합니다.");
         }
 
         // DTO로 변환

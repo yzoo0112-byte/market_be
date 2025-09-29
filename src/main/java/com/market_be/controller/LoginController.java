@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -54,7 +55,7 @@ public class LoginController {
                 .email(request.getEmail())
                 .addr(request.getAddr())
                 .role(Role.USER) // USER에서 ROLE_USER으로 수정함
-//                .lastVisitDate(new Date())
+                // .lastVisitDate(new Date())
                 .build();
 
         appUserRepository.save(user);
@@ -68,7 +69,7 @@ public class LoginController {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                 credentials.getLoginId(), credentials.getPassword());
         Authentication authentication = authenticationManager.authenticate(token);
-        String jwtToken = jwtService.generateToken(authentication.getName());
+
         AppUser appUser = appUserRepository.findByLoginId(credentials.getLoginId())
                 .orElseThrow(EntityExistsException::new);
         // 1. 로그인하는 유저의 마지막 접속 일자 조회
@@ -90,6 +91,11 @@ public class LoginController {
                 visit.setVisits(visit.getVisits() + 1);
             }
         }
+
+        List<String> roles = List.of("ROLE_" + appUser.getRole().name()); // roles 변수 선언 및 초기화
+
+        String jwtToken = jwtService.generateToken(credentials.getLoginId(), roles);
+
         Map<String, Object> result = new HashMap<>();
         result.put("userId", appUser.getId());
         result.put("nickname", appUser.getNickname());
