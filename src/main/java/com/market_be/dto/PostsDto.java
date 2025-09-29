@@ -33,6 +33,7 @@ public class PostsDto {
     private List<FilesDto> fileList;
 
     private String hashtag;
+    private boolean deleted;
 
     public static PostsDto fromEntity(Posts posts) {
         return PostsDto.builder()
@@ -56,6 +57,7 @@ public class PostsDto {
                                 )
                                 .collect(Collectors.toList())
                 )
+                .deleted(posts.isDeleted())
                 .build();
     };
 

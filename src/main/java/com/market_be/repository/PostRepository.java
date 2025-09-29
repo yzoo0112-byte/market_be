@@ -32,4 +32,6 @@ public interface PostRepository extends JpaRepository<Posts, Long>, JpaSpecifica
             "OR LOWER(p.userId.nickname) LIKE LOWER(CONCAT('%', :keyword2, '%')))")
 
     Page<Posts> searchPostsByMultipleKeywords(String keyword1, String keyword2, Pageable pageable);
+
+    Page<Posts> findByDeletedFalseAndTitleContaining(String keyword, Pageable pageable);
 }

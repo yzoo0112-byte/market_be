@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,12 +46,39 @@ public class PostsController {
         return ResponseEntity.ok(dto);
     }
 
-    // ✅ 게시글 삭제
+    // ✅ 게시글 삭제(휴지통으로)
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletePost(@PathVariable Long id) {
-        postsService.deletePost(id);
+    public ResponseEntity<?> softDelete(@PathVariable Long id) {
+        postsService.softDelete(id);
         return ResponseEntity.ok().body(id);
     }
+
+    //영구삭제
+    @DeleteMapping("/trash/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable Long id) {
+        postsService.deletePost(id);
+        return ResponseEntity.ok().body("영구삭제되었습니다");
+    }
+
+
+    // 게시글 복구
+    @PatchMapping("/{id}/restore")
+    public ResponseEntity<?> restore(@PathVariable Long id) {
+        postsService.restore(id);
+        return ResponseEntity.ok().body("게시글이 복구되었습니다.");
+    }
+
+    // 휴지통 게시글 조회
+    @GetMapping("/d/trash")
+    public ResponseEntity<List<PostsDto>> getDeletedPosts() {
+        List<PostsDto> deletedPosts = postsRepository.findByDeletedTrue()
+                .stream()
+                .map(PostsDto::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(deletedPosts);
+    }
+
+
 
     // ✅ 게시글 등록
     @PostMapping

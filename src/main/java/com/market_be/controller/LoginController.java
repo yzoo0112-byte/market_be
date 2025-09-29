@@ -96,6 +96,7 @@ public class LoginController {
         Map<String, Object> result = new HashMap<>();
         result.put("userId", appUser.getId());
         result.put("nickname", appUser.getNickname());
+        result.put("role",  appUser.getRole());
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
                 .body(result);

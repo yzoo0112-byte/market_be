@@ -1,5 +1,6 @@
 package com.market_be.controller;
 
+import com.market_be.dto.CommentRequest;
 import com.market_be.dto.CommentsDto;
 import com.market_be.entity.AppUser;
 import com.market_be.entity.Comments;
@@ -43,11 +44,11 @@ public class CommentsController {
 
     //댓글 수정
     @PutMapping("/{id}/comment/{commentId}")
-    public ResponseEntity<?> updateComment(@PathVariable Long id,
-                                           @PathVariable Long commentId,
-                                           @RequestBody String newContent,
+    public ResponseEntity<?> updateComment(
+                                           @RequestBody CommentRequest dto,
+
                                            Authentication authentication) {
-        commentsService.updateComment(commentId, newContent, authentication.getName());
+        commentsService.updateComment(dto, authentication.getName());
         return ResponseEntity.ok("댓글이 수정되었습니다.");
     }
 
