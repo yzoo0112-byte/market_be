@@ -54,7 +54,7 @@ public class LoginController {
                 .email(request.getEmail())
                 .addr(request.getAddr())
                 .role(Role.USER) // USER에서 ROLE_USER으로 수정함
-                .lastVisitDate(new Date())
+//                .lastVisitDate(new Date())
                 .build();
 
         appUserRepository.save(user);

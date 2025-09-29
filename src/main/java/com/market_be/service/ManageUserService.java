@@ -31,12 +31,12 @@ public class ManageUserService {
                                                 .birth(user.getBirth())
                                                 .email(user.getEmail())
                                                 .addr(user.getAddr())
-                                                .lastVisiteDate(
-                                                                user.getLastVisitDate() == null
-                                                                                ? null
-                                                                                : new java.sql.Date(user
-                                                                                                .getLastVisitDate()
-                                                                                                .getTime()))
+//                                                .lastVisiteDate(
+//                                                                user.getLastVisitDate() == null
+//                                                                                ? null
+//                                                                                : new java.time.LocalDate(user
+//                                                                                                .getLastVisitDate()
+//                                                                        .get)
                                                 .role(Role.valueOf(user.getRole().name().replace("ROLE_", ""))) // 여기 추가
                                                 .build())
                                 .collect(Collectors.toList());

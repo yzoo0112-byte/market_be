@@ -22,14 +22,14 @@ public class AppUserDto {
     private String userName;
     private String password;
     private String phoneNum;
-    private String role;
+    private Role role;
     private String birth;
     private String email;
     private String addr;
 
     private LocalDate lastVisiteDate;
 
-    private Role role; // ← 여기 추가
+
 
     public static AppUserDto fromEntity(AppUser appUser) {
         return AppUserDto.builder()
