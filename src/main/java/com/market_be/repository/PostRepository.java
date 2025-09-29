@@ -169,5 +169,5 @@ public interface PostRepository extends JpaRepository<Posts, Long>, JpaSpecifica
         Page<Posts> searchPostsByMultipleKeywords7(String keyword1, String keyword2, String keyword3, String keyword4,
                         String keyword5, String keyword6, String keyword7, Pageable pageable);
 
-        
+
 }
