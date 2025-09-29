@@ -2,7 +2,9 @@ package com.market_be.service;
 
 import com.market_be.dto.PostRequestDto;
 import com.market_be.entity.AppUser;
+import com.market_be.entity.Likes;
 import com.market_be.entity.Posts;
+import com.market_be.repository.LikesRepository;
 import com.market_be.repository.PostsRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -14,10 +16,11 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class PostsService {
     private final PostsRepository postsRepository;
+    private final LikesRepository likesRepository;
 
     // ✅ 게시글 삭제
     public void deletePost(Long id) {
-
+       likesRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         Posts posts = postsRepository.findByIdIncludingDeleted(id)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
         postsRepository.delete(posts);
