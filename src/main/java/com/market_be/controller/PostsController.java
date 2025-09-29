@@ -8,6 +8,7 @@ import com.market_be.entity.Files;
 import com.market_be.entity.Posts;
 import com.market_be.repository.AppUserRepository;
 import com.market_be.repository.FilesRepository;
+import com.market_be.repository.LikesRepository;
 import com.market_be.repository.PostsRepository;
 import com.market_be.service.PostService;
 import com.market_be.service.PostsService;
@@ -36,6 +37,7 @@ public class PostsController {
     private final PostService postService;
     private final FilesRepository filesRepository;
     private final AppUserRepository appUserRepository;
+    private final LikesRepository likesRepository;
 
     // ✅ 게시글 단일 조회
     @GetMapping("/{id}")
@@ -43,6 +45,13 @@ public class PostsController {
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다."));
         PostsDto dto = PostsDto.fromEntity(posts);
+
+        //1. post id로 좋아요 수 찾기
+        Long likeCount = likesRepository.countByPostId(id);
+
+        // 2. dto set likecount하기
+        dto.setLikeCount(likeCount);
+
         return ResponseEntity.ok(dto);
     }
 

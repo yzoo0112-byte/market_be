@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class PostsDto {
 
     private Long postId;
-
+private String nickname;
     private Long userId;
 
     private String title;
@@ -35,6 +35,8 @@ public class PostsDto {
     private String hashtag;
     private boolean deleted;
 
+    private Long likeCount;
+
     public static PostsDto fromEntity(Posts posts) {
         return PostsDto.builder()
                 .postId(posts.getId())
@@ -44,6 +46,7 @@ public class PostsDto {
                 .views(posts.getViews())
                 .createAt(posts.getCreateAt())
                 .updateAt(posts.getUpdateAt())
+                .nickname(posts.getUserId().getNickname())
                 .userId(posts.getUserId().getId())
                 .fileList(
                         posts.getFileList().stream()

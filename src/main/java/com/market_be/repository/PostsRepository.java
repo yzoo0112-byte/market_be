@@ -14,4 +14,6 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
     @Query("SELECT p FROM Posts p WHERE p.id = :id")
     Optional<Posts> findByIdIncludingDeleted(@Param("id") Long id);
 
+
+
 }

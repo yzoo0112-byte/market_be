@@ -1,9 +1,9 @@
 package com.market_be.service;
 
 import com.market_be.dto.PostRequestDto;
-import com.market_be.entity.AppUser;
-import com.market_be.entity.Likes;
-import com.market_be.entity.Posts;
+import com.market_be.entity.*;
+import com.market_be.repository.CommentsRepository;
+import com.market_be.repository.FilesRepository;
 import com.market_be.repository.LikesRepository;
 import com.market_be.repository.PostsRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,6 +18,8 @@ import java.util.List;
 public class PostsService {
     private final PostsRepository postsRepository;
     private final LikesRepository likesRepository;
+    private final FilesRepository filesRepository;
+    private final CommentsRepository commentsRepository;
 
     // ✅ 게시글 삭제
     public void deletePost(Long id) {
@@ -25,8 +27,12 @@ public class PostsService {
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
         List<Likes> likes = likesRepository.findByPostId(posts);
-        likesRepository.deleteAll(likes);
+        List<Files> files = filesRepository.findByPost(posts);
+        List<Comments> comments = commentsRepository.findAllByPostId(posts);
 
+        likesRepository.deleteAll(likes);
+        filesRepository.deleteAll(files);
+        commentsRepository.deleteAll(comments);
         postsRepository.delete(posts);
 
     }
