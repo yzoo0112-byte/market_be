@@ -140,10 +140,12 @@ public class PostsController {
 
     // ✅ 게시글 수정
     @PutMapping("/{id}")
-    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id,
-                                                      @ModelAttribute PostRequestDto dto,
-                                                      @AuthenticationPrincipal String loginId) throws IOException {
-        System.out.println("updatePost 호출됨");
+    public ResponseEntity<PostResponseDto> updatePost(
+            @PathVariable Long id,
+            @ModelAttribute PostRequestDto dto,
+            @AuthenticationPrincipal String loginId,
+            @RequestParam(value = "removedFiles", required = false) List<Long> removedFileIds
+    ) throws IOException {
 
         AppUser user = appUserRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자 정보 없음"));
@@ -162,28 +164,28 @@ public class PostsController {
 
         Posts updatedPost = postService.save(post);
 
-        // 기존 파일 삭제
-        List<Files> existingFiles = filesRepository.findByPostId(id);
-        for (Files file : existingFiles) {
-            filesRepository.delete(file);
-            // 실제 파일 삭제는 필요 시 구현
+        // 삭제할 파일만 삭제
+        if (removedFileIds != null) {
+            for (Long fileId : removedFileIds) {
+                Files fileEntity = filesRepository.findById(fileId).orElse(null);
+                if (fileEntity != null) {
+                    File file = new File(System.getProperty("user.dir") + "/uploads/" + fileEntity.getFileName());
+                    if (file.exists()) file.delete();
+                    filesRepository.delete(fileEntity);
+                }
+            }
         }
 
-        List<String> filePaths = new ArrayList<>();
-
+        // 새로 업로드된 파일 저장
         if (dto.getFiles() != null) {
             for (MultipartFile file : dto.getFiles()) {
                 String uploadDir = System.getProperty("user.dir") + "/uploads";
                 File directory = new File(uploadDir);
-                if (!directory.exists()) {
-                    directory.mkdirs();
-                }
+                if (!directory.exists()) directory.mkdirs();
 
                 String orgName = file.getOriginalFilename();
                 String fileName = System.currentTimeMillis() + "_" + orgName;
-                String filePath = uploadDir + "/" + fileName;
-                file.transferTo(new File(filePath));
-                filePaths.add(filePath);
+                file.transferTo(new File(uploadDir + "/" + fileName));
 
                 Files fileEntity = new Files();
                 fileEntity.setPost(updatedPost);
@@ -198,14 +200,20 @@ public class PostsController {
             }
         }
 
+        // 모든 파일 URL 반환
+        List<String> fileUrls = updatedPost.getFileList().stream()
+                .map(Files::getFileUrl)
+                .collect(Collectors.toList());
+
         PostResponseDto response = new PostResponseDto(
                 updatedPost.getId(),
                 updatedPost.getTitle(),
-                updatedPost.getHashtag(),
                 updatedPost.getContent(),
-                filePaths
+                updatedPost.getHashtag(),
+                fileUrls
         );
 
         return ResponseEntity.ok(response);
     }
+
 }

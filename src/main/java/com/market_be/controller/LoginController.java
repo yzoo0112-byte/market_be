@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
 @RestController
 @RequiredArgsConstructor
 public class LoginController {
@@ -38,7 +37,6 @@ public class LoginController {
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final VisitRepository visitRepository;
-
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
@@ -55,10 +53,9 @@ public class LoginController {
                 .birth(request.getBirth())
                 .email(request.getEmail())
                 .addr(request.getAddr())
-                .role(Role.USER)
-//                .lastVisitDate(LocalDate.now())
+                .role(Role.USER) // USER에서 ROLE_USER으로 수정함
+                .lastVisitDate(new Date())
                 .build();
-
 
         appUserRepository.save(user);
         return ResponseEntity.ok("회원가입 성공");
@@ -74,29 +71,29 @@ public class LoginController {
         String jwtToken = jwtService.generateToken(authentication.getName());
         AppUser appUser = appUserRepository.findByLoginId(credentials.getLoginId())
                 .orElseThrow(EntityExistsException::new);
-        //1. 로그인하는 유저의 마지막 접속 일자 조회
+        // 1. 로그인하는 유저의 마지막 접속 일자 조회
         LocalDate lastVisitDate = appUser.getLastVisitDate();
-        //2. 마지막 접속 일자가 오늘이 아닌 경우
-        if(lastVisitDate == null || !lastVisitDate.equals(LocalDate.now())) {
-            //3. 마지막 접속 일자 오늘로 변경
+        // 2. 마지막 접속 일자가 오늘이 아닌 경우
+        if (lastVisitDate == null || !lastVisitDate.equals(LocalDate.now())) {
+            // 3. 마지막 접속 일자 오늘로 변경
             appUser.setLastVisitDate(LocalDate.now());
-            //4. visit 테이블 조회
+            // 4. visit 테이블 조회
             Visit visit = visitRepository.findByVisitDate(LocalDate.now());
-            //5. 오늘자 방문 레코드 자체가 없는 경우 카운트 1을 갖는 레코드 생성
-            if(visit == null) {
+            // 5. 오늘자 방문 레코드 자체가 없는 경우 카운트 1을 갖는 레코드 생성
+            if (visit == null) {
                 Visit newVisit = Visit.builder()
                         .visitDate(LocalDate.now())
                         .visits(1)
                         .build();
                 visitRepository.save(newVisit);
-            }else { //6. 오늘자 방문 레코드가 이미 존재하는 경우 기존 카운트 + 1
+            } else { // 6. 오늘자 방문 레코드가 이미 존재하는 경우 기존 카운트 + 1
                 visit.setVisits(visit.getVisits() + 1);
             }
         }
         Map<String, Object> result = new HashMap<>();
         result.put("userId", appUser.getId());
         result.put("nickname", appUser.getNickname());
-        result.put("role",  appUser.getRole());
+        result.put("role", appUser.getRole());
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken)
                 .body(result);

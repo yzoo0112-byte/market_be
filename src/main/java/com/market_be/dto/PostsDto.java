@@ -59,6 +59,6 @@ public class PostsDto {
                 )
                 .deleted(posts.isDeleted())
                 .build();
-    };
+    }
 
 }
