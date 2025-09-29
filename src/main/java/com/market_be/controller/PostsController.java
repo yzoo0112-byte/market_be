@@ -11,7 +11,12 @@ import com.market_be.repository.FilesRepository;
 import com.market_be.repository.PostsRepository;
 import com.market_be.service.PostService;
 import com.market_be.service.PostsService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,6 +83,46 @@ public class PostsController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(deletedPosts);
     }
+
+    // 휴지통 엑셀 다운로드
+    @GetMapping("/manage/trash/excel") // 여기서 URL 통일
+    public void downloadDeletedPostsExcel(HttpServletResponse response) throws IOException {
+        String fileName = "deleted_posts.xlsx";
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("삭제된 게시글");
+
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("글 번호");
+        headerRow.createCell(1).setCellValue("제목");
+        headerRow.createCell(2).setCellValue("작성자");
+        headerRow.createCell(3).setCellValue("조회수");
+        headerRow.createCell(4).setCellValue("작성일");
+        headerRow.createCell(5).setCellValue("수정일");
+
+        List<Posts> deletedPosts = postsRepository.findByDeletedTrue();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        int rowNum = 1;
+        for (Posts post : deletedPosts) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(post.getId());
+            row.createCell(1).setCellValue(post.getTitle());
+            row.createCell(2).setCellValue(post.getUserId().getNickname());
+            row.createCell(3).setCellValue(post.getViews() != null ? post.getViews() : 0);
+            row.createCell(4).setCellValue(post.getCreateAt() != null ? post.getCreateAt().format(formatter) : "");
+            row.createCell(5).setCellValue(post.getUpdateAt() != null ? post.getUpdateAt().format(formatter) : "");
+        }
+
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
+
+
 
 
 
