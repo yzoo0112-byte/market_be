@@ -112,7 +112,7 @@ public class PostsController {
                 String fileName = System.currentTimeMillis() + "_" + orgName;
                 String filePath = uploadDir + "/" + fileName;
                 file.transferTo(new File(filePath));
-                filePaths.add(filePath);
+                filePaths.add("/uploads/" + fileName);
 
                 Files fileEntity = new Files();
                 fileEntity.setPost(savedPost);
@@ -215,5 +215,7 @@ public class PostsController {
 
         return ResponseEntity.ok(response);
     }
+
+
 
 }
