@@ -31,7 +31,8 @@ public class CommentsController {
             Authentication authentication
 
     ) {
-       commentsService.createComment(id, dto.getComment(), authentication.getName());
+        Long parentId = dto.getParentId();
+       commentsService.createComment(id, dto.getComment(), authentication.getName(), parentId);
 
         return ResponseEntity.status(201).build();
     }

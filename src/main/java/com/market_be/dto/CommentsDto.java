@@ -21,7 +21,7 @@ public class CommentsDto {
     private String comment;
 
     private LocalDateTime createdAt;
-
+    private Long parentId;
     private LocalDateTime updatedAt;
 
     private String nickname;
@@ -35,6 +35,7 @@ public class CommentsDto {
                 .createdAt(comments.getCreatedAt())
                 .updatedAt(comments.getUpdatedAt())
                 .nickname(comments.getUserId().getNickname())
+                .parentId(comments.getParentId().getId())
                 .build();
     }
 }

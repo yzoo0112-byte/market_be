@@ -28,14 +28,23 @@ public class CommentsService {
         private final PostsRepository postsRepository;
 
         // 댓글 생성
-        public Comments createComment(Long postId, String comment, String userId) {
+        public Comments createComment(Long postId, String comment, String userId, Long parentId) {
                 Posts posts = postsRepository.findById(postId).orElseThrow(EntityNotFoundException::new);
                 AppUser user = appUserRepository.findByLoginId(userId).orElseThrow(EntityNotFoundException::new);
+
+                Comments parentComment = null;
+                if(parentId != null){
+                        parentComment = commentsRepository.findById(parentId)
+                                .orElseThrow(EntityNotFoundException::new);
+                }
+
                 Comments comments = Comments.builder()
                                 .comment(comment)
                                 .postId(posts)
                                 .userId(user)
+                        .parentId(parentComment)
                                 .build();
+
                 commentsRepository.save(comments);
                 return comments;
         }
@@ -55,6 +64,7 @@ public class CommentsService {
                                         .createdAt(comment.getCreatedAt().withNano(0))
                                         .updatedAt(comment.getUpdatedAt() != null ? comment.getUpdatedAt().withNano(0)
                                                         : null)
+                                        .parentId(comment.getParentId() != null ? comment.getParentId().getId() : null)
                                         .build();
                         dtoList.add(commentDto);
                 }
