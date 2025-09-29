@@ -53,6 +53,7 @@ public class PostsDto {
                                         .fileUrl(files.getFileUrl())
                                         .fileName(files.getFileName())
                                         .fileSize(files.getFileSize())
+                                        .imageYn(files.getImageYn())
                                         .build()
                                 )
                                 .collect(Collectors.toList())
