@@ -31,11 +31,7 @@ public class ManageUserService {
                         .birth(user.getBirth())
                         .email(user.getEmail())
                         .addr(user.getAddr())
-                        .lastVisiteDate(
-                                user.getLastVisitDate() == null
-                                        ? null
-                                        : new java.sql.Date(user.getLastVisitDate().getTime())
-                        )
+
                         .role(Role.valueOf(user.getRole().name().replace("ROLE_", ""))) // 여기 추가
                         .build()
                 )
