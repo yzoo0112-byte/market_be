@@ -20,26 +20,22 @@ public class ManageUserService {
         public List<AppUserDto> getAllUsers() {
                 List<AppUser> users = appUserRepository.findAll();
 
-                return users.stream()
-                                .map(user -> AppUserDto.builder()
-                                                .userId(user.getId())
-                                                .loginId(user.getLoginId())
-                                                .nickname(user.getNickname())
-                                                .userName(user.getUserName())
-                                                .password(null) // ⚠️ 비밀번호는 절대 반환하지 않음
-                                                .phoneNum(user.getPhoneNum())
-                                                .birth(user.getBirth())
-                                                .email(user.getEmail())
-                                                .addr(user.getAddr())
-//                                                .lastVisiteDate(
-//                                                                user.getLastVisitDate() == null
-//                                                                                ? null
-//                                                                                : new java.time.LocalDate(user
-//                                                                                                .getLastVisitDate()
-//                                                                        .get)
-                                                .role(Role.valueOf(user.getRole().name().replace("ROLE_", ""))) // 여기 추가
-                                                .build())
-                                .collect(Collectors.toList());
-        }
+        return users.stream()
+                .map(user -> AppUserDto.builder()
+                        .userId(user.getId())
+                        .loginId(user.getLoginId())
+                        .nickname(user.getNickname())
+                        .userName(user.getUserName())
+                        .password(null) // ⚠️ 비밀번호는 절대 반환하지 않음
+                        .phoneNum(user.getPhoneNum())
+                        .birth(user.getBirth())
+                        .email(user.getEmail())
+                        .addr(user.getAddr())
+
+                        .role(Role.valueOf(user.getRole().name().replace("ROLE_", ""))) // 여기 추가
+                        .build()
+                )
+                .collect(Collectors.toList());
+    }
 
 }
