@@ -3,6 +3,7 @@ package com.market_be.config;
 import com.market_be.entity.AppUser;
 import com.market_be.repository.AppUserRepository;
 import com.market_be.service.JwtService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,12 +11,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -29,41 +32,63 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String path = request.getRequestURI();
+        // String path = request.getRequestURI();
 
-        // 공개 경로는 필터 건너뛰기
-        if (path.equals("/") || path.startsWith("/login") || path.startsWith("/signup") || path.startsWith("/main")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        // // 공개 경로는 필터 건너뛰기
+        // if (path.equals("/") || path.startsWith("/login") ||
+        // path.startsWith("/signup") || path.startsWith("/main")) {
+        // filterChain.doFilter(request, response);
+        // return;
+        // }
 
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        // String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            try {
-                String loginId = jwtService.parseToken(request);
+        // if (authorizationHeader != null && authorizationHeader.startsWith("Bearer "))
+        // {
+        // try {
+        // String loginId = jwtService.parseToken(request);
 
-                if (loginId != null) {
-                    AppUser user = appUserRepository.findByLoginId(loginId)
-                            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " + loginId));
+        // if (loginId != null) {
+        // AppUser user = appUserRepository.findByLoginId(loginId)
+        // .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다: " +
+        // loginId));
 
-                    // Role 기반 권한 세팅
-                    List<SimpleGrantedAuthority> authorities = List.of(
-                            new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
-                    );
+        // // Role 기반 권한 세팅
+        // List<SimpleGrantedAuthority> authorities = List.of(
+        // new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
 
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(loginId, null, authorities);
+        // UsernamePasswordAuthenticationToken authentication = new
+        // UsernamePasswordAuthenticationToken(
+        // loginId, null, authorities);
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+        // SecurityContextHolder.getContext().setAuthentication(authentication);
+        // }
+
+        // } catch (Exception e) {
+        // // JWT 검증 실패 시 SecurityContext 초기화
+        // SecurityContextHolder.clearContext();
+        // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        // response.getWriter().write("유효하지 않은 토큰입니다.");
+        // return;
+        String jwtToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (jwtToken != null && jwtToken.startsWith("Bearer ")) {
+            String token = jwtToken.replace("Bearer ", "");
+            String loginId = jwtService.parseTokenFromTokenOnly(token);
+
+            if (loginId != null) {
+                AppUser appUser = appUserRepository.findByLoginId(loginId).orElse(null);
+                List<SimpleGrantedAuthority> authorities = Collections.emptyList();
+
+                if (appUser != null) {
+                    authorities = List.of(
+                            new SimpleGrantedAuthority("ROLE_" + appUser.getRole().name()));
                 }
 
-            } catch (Exception e) {
-                // JWT 검증 실패 시 SecurityContext 초기화
-                SecurityContextHolder.clearContext();
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("유효하지 않은 토큰입니다.");
-                return;
+                Authentication authentication = new UsernamePasswordAuthenticationToken(
+                        loginId,
+                        null,
+                        authorities);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
 

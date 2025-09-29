@@ -4,7 +4,7 @@ import com.market_be.content.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "appuser")
@@ -44,9 +44,9 @@ public class AppUser {
     private String addr;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)
+    @Column(nullable = false)
     private Role role;
 
-    private Date lastVisitDate;
+    private LocalDate lastVisitDate;
 
 }

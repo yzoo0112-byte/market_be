@@ -49,4 +49,6 @@ public class Posts {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true ,fetch = FetchType.LAZY)
     private List<Files> fileList;
+
+    private boolean deleted = false;
 }

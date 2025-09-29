@@ -1,5 +1,6 @@
 package com.market_be.service;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class JwtService {
@@ -22,24 +24,47 @@ public class JwtService {
     private static final String SECRET = "your-very-secure-secret-key-should-be-long";
     private static final Key SIGNING_KEY = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
-    public String generateToken(String loginId) {
+    public String generateToken(String loginId,  List<String> roles) {
         return Jwts.builder()
                 .setSubject(loginId)
+                .claim("roles", roles)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SIGNING_KEY)
                 .compact();
     }
 
-    public String parseToken(HttpServletRequest request) {
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header != null && header.startsWith(PREFIX)) {
+    public String parseToken(String token) {
+        try {
             JwtParser parser = Jwts.parserBuilder()
                     .setSigningKey(SIGNING_KEY)
                     .build();
-            return parser.parseClaimsJws(header.replace(PREFIX, ""))
-                    .getBody()
-                    .getSubject();
+            return parser.parseClaimsJws(token).getBody().getSubject();
+        } catch (JwtException e) {
+            System.err.println("JWT 파싱 실패: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public String parseToken(HttpServletRequest request) {
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring("Bearer ".length());
+            return parseToken(token); // 핵심 로직 재사용
         }
         return null;
     }
+
+    public String parseTokenFromTokenOnly(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(SIGNING_KEY)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();   // loginId 반환
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

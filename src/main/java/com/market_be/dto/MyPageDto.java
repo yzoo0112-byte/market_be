@@ -10,6 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MyPageDto {
+    private String loginId;
+    private String password;
     private String nickname;
     private String userName;
     private String phoneNum;

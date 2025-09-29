@@ -7,6 +7,7 @@ import lombok.*;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "visit")
@@ -18,7 +19,7 @@ import java.sql.Date;
 public class Visit {
     @Id
     @LastModifiedDate
-    private Date visitDate;
+    private LocalDate visitDate;
 
     private int visits;
 }

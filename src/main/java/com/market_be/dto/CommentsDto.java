@@ -13,10 +13,10 @@ import java.time.LocalDateTime;
 @Builder
 public class CommentsDto {
     private Long postId;
-
+    private Long UId;
     private Long commentId;
 
-    private Long userId;
+    private String userId;
 
     private String comment;
 
@@ -25,12 +25,12 @@ public class CommentsDto {
     private LocalDateTime updatedAt;
 
     private String nickname;
-
-    public CommentsDto of(Comments comments){
+    private String loginId;
+    public static CommentsDto of(Comments comments){
         return CommentsDto.builder()
                 .commentId(comments.getId())
                 .postId(comments.getPostId().getId())
-                .userId(comments.getUserId().getId())
+                .userId(comments.getUserId().getLoginId())
                 .comment(comments.getComment())
                 .createdAt(comments.getCreatedAt())
                 .updatedAt(comments.getUpdatedAt())

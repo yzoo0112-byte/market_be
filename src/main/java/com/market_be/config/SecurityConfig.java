@@ -32,8 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/manage/**").hasRole("ADMIN")
                         .requestMatchers("/mypage/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/post").authenticated()
-                        .anyRequest().permitAll()
-                )
+                        .anyRequest().permitAll())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

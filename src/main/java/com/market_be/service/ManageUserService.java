@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ManageUserService {
 
-    private final AppUserRepository appUserRepository;
+        private final AppUserRepository appUserRepository;
 
-    // 전체 회원 조회
-    public List<AppUserDto> getAllUsers() {
-        List<AppUser> users = appUserRepository.findAll();
+        // 전체 회원 조회
+        public List<AppUserDto> getAllUsers() {
+                List<AppUser> users = appUserRepository.findAll();
 
         return users.stream()
                 .map(user -> AppUserDto.builder()
